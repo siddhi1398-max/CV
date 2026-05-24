@@ -289,7 +289,7 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
     <div class="about-strip">
       <button class="about-toggle" onclick="togAbout()" id="aboutBtn" aria-expanded="false" aria-controls="aboutBody">
         <span class="at-pulse"></span>
-        <span class="at-label" id="aboutLabel">About me &nbsp;—&nbsp; click to read</span>
+        <span class="at-label" id="aboutLabel">About &nbsp;—&nbsp; click to read</span>
         <i class="ti ti-chevron-down at-chevron" id="aboutChev"></i>
       </button>
       <div class="about-body closed" id="aboutBody">
@@ -303,12 +303,6 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
             Currently working as a Junior Consultant and Course Coordinator, she continues to explore the intersection of medicine, technology, and design.
             Beyond medicine, she finds balance in running, swimming, cooking, illustration, painting, and literature creative pursuits that continue to shape her perspective on both medicine and life.
           </p>
-          <div class="about-stats">
-            <span class="astat"><i class="ti ti-heartbeat"></i> 4+ yrs clinical EM</span>
-            <span class="astat"><i class="ti ti-microscope"></i> 3 peer-reviewed articles</span>
-            <span class="astat"><i class="ti ti-baby-carriage"></i> PALS · ATLS · ACLS</span>
-            <span class="astat"><i class="ti ti-device-mobile-code"></i> PedResus PWA</span>
-          </div>
         </div>
       </div>
     </div>
@@ -727,7 +721,7 @@ function togAbout(){
     body.classList.add('closed');
     chev.classList.remove('open');
     btn.setAttribute('aria-expanded','false');
-    label.textContent='About me \u00a0\u2014\u00a0 click to read';
+    label.textContent='About \u00a0\u2014\u00a0 click to read';
   }
 }
 
