@@ -29,6 +29,10 @@
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
   --r:6px;
   --tl-line-left:18px;--tl-dot-size:10px;--tl-card-pad-left:42px;
+  /* ECG canvas colours — light mode */
+  --ecg-bg:#E3D9C4;
+  --ecg-line:#7B1D2E;
+  --ecg-glow:rgba(123,29,46,0.55);
 }
 [data-theme="dark"]{
   --p:#1A1510;--p2:#221C14;--p3:#2B221A;
@@ -36,18 +40,31 @@
   --teal:#2FB8BE;--teal2:#48D0D6;--teal-bg:#0D2526;
   --gold:#D4A832;--gold-bg:#2A2010;
   --ink:#F0E8DA;--muted:#B0A090;--faint:#7A6A58;--border:#3A3020;
+  /* ECG canvas colours — dark mode: bright teal glow */
+  --ecg-bg:#1A1510;
+  --ecg-line:#2FB8BE;
+  --ecg-glow:rgba(47,184,190,0.6);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px;line-height:1.6;transition:background .25s,color .25s;}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
 
 /* ══════════════════════════════════════════════════════════
-   ENHANCEMENT 1 — ECG WAVEFORM background in hero
-   SVG data-URI of a PQRST waveform drawn as stroke-dashoffset
+   ECG BAR — canvas-drawn glowing waveform
    ══════════════════════════════════════════════════════════ */
-.ecg-bar{height:3px;background:var(--p3);overflow:hidden;}
-.ecg-bar-p{height:100%;width:50%;background:linear-gradient(90deg,transparent,var(--wine),transparent);animation:sw 2.8s linear infinite;}
-@keyframes sw{0%{transform:translateX(-150%)}100%{transform:translateX(300%)};}
+.ecg-bar{
+  height:44px;
+  overflow:hidden;
+  position:relative;
+  background:var(--ecg-bg);
+  border-bottom:1px solid var(--border);
+  transition:background .25s;
+}
+.ecg-bar canvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
 
 /* Hero ECG backdrop — faint waveform */
 .hero{
@@ -57,28 +74,21 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
   position:relative;
   overflow:hidden;
 }
-/* The SVG waveform trace sits behind content */
 .hero-ecg-bg{
   position:absolute;
   bottom:0; left:0; right:0;
   height:60px;
   pointer-events:none;
-  opacity:.13;
   overflow:hidden;
 }
-.hero-ecg-bg svg{
-  width:200%;
+.hero-ecg-bg canvas{
+  display:block;
+  width:100%;
   height:100%;
-  animation:ecg-scroll 6s linear infinite;
 }
-@keyframes ecg-scroll{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
-}
-[data-theme="dark"] .hero-ecg-bg{opacity:.18;}
 
 /* ══════════════════════════════════════════════════════════
-   ENHANCEMENT 6 — Glassmorphism sticky nav
+   GLASSMORPHISM STICKY NAV
    ══════════════════════════════════════════════════════════ */
 .nav{
   background:rgba(237,230,212,0.72);
@@ -102,9 +112,7 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .hi{max-width:820px;margin:0 auto;position:relative;z-index:1;}
 .hero-top{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:.75rem;}
 
-/* ══════════════════════════════════════════════════════════
-   ENHANCEMENT 2 — POCUS sweep on avatar hover
-   ══════════════════════════════════════════════════════════ */
+/* POCUS sweep on avatar hover */
 .avatar{
   width:80px;height:80px;border-radius:50%;
   background:var(--p3);
@@ -115,7 +123,6 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
   position:relative;cursor:default;
 }
 .avatar img{width:100%;height:100%;object-fit:cover;}
-/* Conic sweep overlay — hidden until hover */
 .avatar::after{
   content:'';
   position:absolute;inset:0;
@@ -137,7 +144,6 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
   0%{transform:rotate(0deg)}
   100%{transform:rotate(360deg)}
 }
-/* concentric ring for scan feel */
 .avatar:hover{
   box-shadow:0 0 0 3px rgba(10,107,111,.2),
              0 0 0 6px rgba(10,107,111,.1),
@@ -202,10 +208,6 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .sec{padding:1.75rem 0;border-bottom:1px solid var(--border);}
 .sec:last-child{border-bottom:none;}
 
-/* ══════════════════════════════════════════════════════════
-   ENHANCEMENT 3 — scroll-reveal fade-up on sections
-   Each .sec gets .sec-hidden on init, .sec-visible when IO fires
-   ══════════════════════════════════════════════════════════ */
 .sec-hidden{
   opacity:0;
   transform:translateY(14px);
@@ -275,9 +277,7 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .pmet.doi-link{color:var(--teal);text-decoration:none;border-color:var(--teal);transition:background .15s;}
 .pmet.doi-link:hover{background:var(--teal-bg);}
 
-/* ══════════════════════════════════════════════════════════
-   ENHANCEMENT 4 — IF impact bars on research cards
-   ══════════════════════════════════════════════════════════ */
+/* IF impact bars */
 .if-bar-wrap{display:flex;align-items:center;gap:8px;margin-top:6px;}
 .if-bar-label{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--faint);white-space:nowrap;min-width:42px;}
 .if-bar-track{flex:1;height:4px;background:var(--p3);border-radius:2px;overflow:hidden;}
@@ -286,14 +286,15 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 
 /* ─── CERTIFICATIONS ─────────────────────────────────────── */
 .cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;}
-.cc{background:var(--p2);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:var(--r);padding:.7rem .9rem;}
+/* cert card as link */
+a.cc{display:block;text-decoration:none;}
+.cc{background:var(--p2);border:1px solid var(--border);border-top:2px solid var(--gold);border-radius:var(--r);padding:.7rem .9rem;transition:background .15s,border-color .15s,transform .15s;}
+a.cc:hover .cc, a.cc:hover{background:var(--gold-bg);border-color:var(--gold);transform:translateY(-2px);}
 .ci{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:2px;}
 .cn{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35;}
 .cy{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px;}
-.doc-links{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.1rem;}
-.doc-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.5px;color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal);border-radius:var(--r);padding:5px 13px;text-decoration:none;transition:background .15s,color .15s;}
-.doc-link:hover{background:var(--teal);color:#fff;}
-.doc-link i{font-size:13px;}
+/* remove old doc-links button */
+.doc-links{display:none;}
 
 /* ─── SKILLS ─────────────────────────────────────────────── */
 .sk{display:flex;flex-wrap:wrap;gap:5px;}
@@ -302,9 +303,7 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .stg.teal{border-color:var(--teal);color:var(--teal);display:inline-flex;align-items:center;gap:5px;}
 .stg.teal:hover{background:var(--teal);color:#fff;}
 
-/* ══════════════════════════════════════════════════════════
-   ENHANCEMENT 5 — Hexagonal radar chart in competencies
-   ══════════════════════════════════════════════════════════ */
+/* ── Radar chart ── */
 .radar-wrap{
   display:flex;
   flex-direction:column;
@@ -317,13 +316,7 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
   border-radius:var(--r);
 }
 .radar-svg{width:min(100%,340px);height:auto;}
-/* axes */
-.radar-axis{stroke:var(--border);stroke-width:1;fill:none;}
-/* web polygon — fills in via JS */
 .radar-web{fill:rgba(10,107,111,.12);stroke:var(--teal);stroke-width:1.5;stroke-linejoin:round;}
-/* grid rings */
-.radar-ring{stroke:var(--border);stroke-width:.5;fill:none;stroke-dasharray:3 3;}
-/* labels */
 .radar-lbl{font-family:var(--mono);font-size:9px;fill:var(--muted);}
 .radar-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;}
 .rl-item{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;color:var(--muted);}
@@ -420,6 +413,151 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
   :root{--tl-line-left:14px;--tl-dot-size:8px;--tl-card-pad-left:32px;}
 }
 
+/* ══════════════════════════════════════════════════════════
+   LIVE DEMO — phone frame + iframe
+   ══════════════════════════════════════════════════════════ */
+.demo-outer{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:1.5rem;
+  align-items:start;
+  padding:1rem 0 .5rem;
+}
+@media(max-width:640px){
+  .demo-outer{grid-template-columns:1fr;justify-items:center;}
+}
+
+/* Phone shell */
+.phone-frame-wrap{display:flex;flex-direction:column;align-items:center;gap:.5rem;}
+.phone-frame{
+  width:200px;
+  background:var(--ink);
+  border-radius:36px;
+  padding:10px 8px 14px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08),
+    0 8px 32px rgba(0,0,0,.35),
+    inset 0 0 0 1.5px rgba(255,255,255,.06);
+  position:relative;
+}
+[data-theme="dark"] .phone-frame{
+  background:#0d0d0d;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.12),
+    0 8px 40px rgba(0,0,0,.7),
+    inset 0 0 0 1.5px rgba(255,255,255,.08);
+}
+.phone-notch{
+  width:70px;height:20px;
+  background:var(--ink);
+  border-radius:0 0 16px 16px;
+  margin:0 auto 6px;
+  position:relative;z-index:2;
+}
+[data-theme="dark"] .phone-notch{background:#0d0d0d;}
+.phone-screen{
+  width:100%;
+  height:390px;
+  border-radius:22px;
+  overflow:hidden;
+  background:#0f172a;
+  position:relative;
+}
+.phone-screen iframe{
+  width:375px; /* app's natural mobile width */
+  height:667px;
+  border:none;
+  transform-origin:top left;
+  transform:scale(calc(184/375));
+  display:block;
+}
+.phone-bar{
+  width:80px;height:4px;
+  background:rgba(255,255,255,.25);
+  border-radius:2px;
+  margin:8px auto 0;
+}
+.phone-caption{
+  font-family:var(--mono);font-size:9px;color:var(--faint);
+  text-align:center;letter-spacing:.5px;
+}
+
+/* Loading overlay */
+.demo-loading{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;background:#0f172a;z-index:10;
+  font-family:var(--mono);font-size:9px;color:#94a3b8;letter-spacing:1px;
+}
+.demo-spinner{
+  width:20px;height:20px;
+  border:2px solid rgba(47,184,190,.2);
+  border-top-color:var(--teal);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Info panel */
+.demo-info{display:flex;flex-direction:column;gap:.75rem;}
+.demo-tag{
+  font-family:var(--mono);font-size:8px;letter-spacing:2px;
+  color:var(--teal);text-transform:uppercase;
+  display:flex;align-items:center;gap:5px;
+}
+.demo-title{font-size:1.25rem;font-weight:700;color:var(--ink);}
+.demo-desc{font-size:12.5px;color:var(--muted);line-height:1.65;}
+
+.demo-steps{display:flex;flex-direction:column;gap:6px;}
+.demo-step{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:12px;color:var(--muted);
+}
+.ds-num{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--teal);color:#fff;
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:1px;
+}
+
+.demo-actions{display:flex;flex-direction:column;gap:8px;}
+.demo-btn-primary{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  color:#fff;background:var(--teal);border:none;border-radius:var(--r);
+  cursor:pointer;padding:8px 18px;text-decoration:none;
+  transition:background .15s;width:fit-content;
+}
+.demo-btn-primary:hover{background:var(--teal2);}
+.demo-install-hint{
+  display:flex;align-items:flex-start;gap:6px;
+  font-size:11px;color:var(--faint);
+  background:var(--p3);border:1px solid var(--border);
+  border-radius:var(--r);padding:.5rem .75rem;
+}
+.demo-install-hint i{font-size:13px;color:var(--teal);flex-shrink:0;margin-top:1px;}
+
+.demo-stats{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding-top:.5rem;border-top:1px solid var(--border);
+}
+.ds-stat{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--mono);font-size:9px;color:var(--muted);
+}
+.ds-stat i{font-size:12px;color:var(--teal);}
+
+/* Blocked fallback */
+.demo-blocked{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--wine-bg);border:1px solid var(--wine);
+  border-radius:var(--r);padding:.75rem 1rem;
+  font-size:12px;color:var(--ink);margin-top:.5rem;
+}
+.demo-blocked i{font-size:16px;color:var(--wine);flex-shrink:0;margin-top:1px;}
+.demo-blocked a{color:var(--teal);}
+
 /* ─── PRINT ──────────────────────────────────────────────── */
 @media print{
   .ecg-bar,.nav,.dm-btn,.hero-actions,.doc-link,.photo-notice,.social-row,.about-toggle,.opento-strip,.carousel-btn,.carousel-dots,.hero-ecg-bg{display:none!important;}
@@ -439,61 +577,20 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
 
 <h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Dr. Siddhi Naik — Interactive CV, Emergency Medicine Physician</h2>
 
-<!-- ── thin ECG pulse bar ── -->
-<div class="ecg-bar"><div class="ecg-bar-p"></div></div>
+<!-- ══ ECG BAR — canvas, theme-aware ══ -->
+<div class="ecg-bar" aria-hidden="true">
+  <canvas id="ecgCanvas"></canvas>
+</div>
 
 <!-- ─── HERO ────────────────────────────────────────────── -->
 <div class="hero">
-  <!-- Enhancement 1: ECG waveform background -->
+  <!-- Hero ECG backdrop — canvas -->
   <div class="hero-ecg-bg" aria-hidden="true">
-    <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Two copies side-by-side for seamless loop -->
-      <!-- PQRST waveform: flat → P bump → flat → QRS spike → ST → T wave, repeating -->
-      <polyline points="
-        0,40 30,40 35,37 40,40 50,40 55,40
-        60,40 65,14 68,55 72,10 76,40
-        85,40 90,34 98,40 110,40
-        130,40 135,37 140,40 150,40 155,40
-        160,40 165,14 168,55 172,10 176,40
-        185,40 190,34 198,40 210,40
-        230,40 235,37 240,40 250,40 255,40
-        260,40 265,14 268,55 272,10 276,40
-        285,40 290,34 298,40 310,40
-        330,40 335,37 340,40 350,40 355,40
-        360,40 365,14 368,55 372,10 376,40
-        385,40 390,34 398,40 410,40
-        430,40 435,37 440,40 450,40 455,40
-        460,40 465,14 468,55 472,10 476,40
-        485,40 490,34 498,40 510,40
-        530,40 535,37 540,40 550,40 555,40
-        560,40 565,14 568,55 572,10 576,40
-        585,40 590,34 598,40 610,40
-        630,40 635,37 640,40 650,40 655,40
-        660,40 665,14 668,55 672,10 676,40
-        685,40 690,34 698,40 710,40
-        730,40 735,37 740,40 750,40 755,40
-        760,40 765,14 768,55 772,10 776,40
-        785,40 790,34 798,40 810,40
-        830,40 835,37 840,40 850,40 855,40
-        860,40 865,14 868,55 872,10 876,40
-        885,40 890,34 898,40 910,40
-        930,40 935,37 940,40 950,40 955,40
-        960,40 965,14 968,55 972,10 976,40
-        985,40 990,34 998,40 1010,40
-        1030,40 1035,37 1040,40 1050,40 1055,40
-        1060,40 1065,14 1068,55 1072,10 1076,40
-        1085,40 1090,34 1098,40 1110,40
-        1130,40 1135,37 1140,40 1150,40 1155,40
-        1160,40 1165,14 1168,55 1172,10 1176,40
-        1185,40 1190,34 1198,40 1200,40
-      "
-      fill="none" stroke="#7B1D2E" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>
+    <canvas id="heroEcgCanvas"></canvas>
   </div>
 
   <div class="hi">
     <div class="hero-top">
-      <!-- Enhancement 2: POCUS avatar -->
       <div class="avatar" id="av" title="Hover for POCUS scan effect"><span>SN</span></div>
       <div class="hero-center">
         <div class="htag">Emergency Medicine · Mangalore, India</div>
@@ -549,7 +646,6 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
   </div>
 </div>
 
-<!-- Enhancement 6: glassmorphism nav -->
 <nav class="nav" aria-label="CV sections">
   <div class="nav-in">
     <button class="nb on" onclick="goTo('experience',this)"><i class="ti ti-briefcase-medical"></i>Experience</button>
@@ -616,8 +712,6 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
       <div class="pau">Kasturba Medical College, Manipal · 2025</div>
     </div>
     <p class="sl">Peer-Reviewed Articles</p>
-
-    <!-- Enhancement 4: IF bar on each article -->
     <div class="pc q1">
       <span class="pb q1">Scopus Q1</span>
       <div class="ptit"><a href="https://doi.org/10.1007/s11739-025-04229-2" target="_blank" rel="noopener" class="pl" style="color:var(--ink);font-size:13px;font-weight:600;font-family:var(--sans);">A portal into hemodynamics: utility of portal vein ultrasound in predicting variceal etiology of upper gastrointestinal hemorrhage in the ED</a></div>
@@ -658,7 +752,6 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
         <a href="https://doi.org/10.1186/s12245-025-00987-0" target="_blank" rel="noopener" class="pmet doi-link"><i class="ti ti-external-link"></i>DOI ↗</a>
       </div>
     </div>
-
     <p class="sl">Book Chapter</p>
     <div class="pc">
       <span class="pb bk">Springer Nature · 2026</span>
@@ -684,98 +777,135 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
   </div>
   <div class="sb closed" id="iB">
     <div class="project-card">
-      <div class="project-body">
-        <div class="project-meta">
-          <div class="project-tag"><i class="ti ti-device-mobile-code"></i>Progressive Web App &nbsp;·&nbsp; Clinical Decision Support</div>
+
+      <!-- Header row: name + stack + link -->
+      <div style="padding:1rem 1.1rem .75rem;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.75rem;">
+        <div>
+          <div class="project-tag" style="margin-bottom:.3rem;"><i class="ti ti-device-mobile-code"></i>PWA · Clinical Decision Support</div>
           <div class="project-name">PedResus</div>
-          <p class="project-desc">Designed and Developed a rapid-access bedside tool for paediatric resuscitation in emergency settings. Key features include weight-based drug dosing, clinical decision support, and protocol checklists optimised for high-stress, time-critical scenarios to reduce the cognitive load. 
-            Works offline, installs on any device without an app store.</p>
-          <div class="project-stack">
+          <p class="project-desc" style="margin-top:.3rem;max-width:480px;">Bedside paediatric resuscitation tool — weight-based drug dosing, protocol checklists, and clinical decision support for high-acuity scenarios.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0;">
+          <a class="demo-btn-primary" href="https://ped-resus.vercel.app/" target="_blank" rel="noopener" style="white-space:nowrap;">
+            <i class="ti ti-external-link"></i>Open full screen ↗
+          </a>
+          <div class="project-stack" style="justify-content:flex-end;">
             <span class="stack-pill"><i class="ti ti-brand-typescript" style="font-size:10px;color:#3178c6;"></i>TypeScript</span>
             <span class="stack-pill"><i class="ti ti-brand-react" style="font-size:10px;color:#61dafb;"></i>React</span>
             <span class="stack-pill">🌊 Tailwind</span>
-            <span class="stack-pill"><i class="ti ti-bolt" style="font-size:10px;color:var(--gold);"></i>Vite</span>
-            <span class="stack-pill"><i class="ti ti-device-mobile" style="font-size:10px;color:var(--teal);"></i>PWA / Service Worker</span>
             <span class="stack-pill"><i class="ti ti-brand-vercel" style="font-size:10px;"></i>Vercel</span>
           </div>
-          <div class="project-links">
-            <a class="project-link" href="https://ped-resus.vercel.app/" target="_blank" rel="noopener"><i class="ti ti-external-link"></i>Live App ↗</a>
-          </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;">
-          <div class="carousel-outer" id="carousel">
-            <div class="carousel-track" id="cTrack">
-              <!-- ▼▼▼ REPLACE WITH YOUR SLIDES ▼▼▼
-                <div class="carousel-slide">
-                  <img src="https://drive.google.com/uc?export=view&id=YOUR_FILE_ID" alt="Home screen" loading="lazy"/>
-                  <div class="slide-caption">Home — weight entry</div>
+      </div>
+
+      <!-- Live demo: phone + how-to -->
+      <div style="padding:0 1.1rem 1rem;">
+        <div class="demo-outer">
+
+          <div class="phone-frame-wrap">
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="demo-loading" id="demoLoading">
+                  <div class="demo-spinner"></div>
+                  <span>Loading PedResus…</span>
                 </div>
-              ▲▲▲ END REPLACE ▲▲▲ -->
-              <div class="carousel-placeholder">
-                <i class="ti ti-device-mobile-screenshot"></i>
-                <p>Add app screenshots here<br/>See HTML comment above</p>
+                <iframe
+                  id="pedResusDemoFrame"
+                  src="https://ped-resus.vercel.app/"
+                  title="PedResus Live Demo"
+                  loading="lazy"
+                  allow="fullscreen"
+                  onload="onDemoLoad()">
+                </iframe>
               </div>
+              <div class="phone-bar"></div>
             </div>
-            <button class="carousel-btn prev" id="cPrev" onclick="cMove(-1)" aria-label="Previous"><i class="ti ti-chevron-left"></i></button>
-            <button class="carousel-btn next" id="cNext" onclick="cMove(1)" aria-label="Next"><i class="ti ti-chevron-right"></i></button>
+            <p class="phone-caption">Live app · scroll &amp; tap inside</p>
           </div>
-          <div class="carousel-dots" id="cDots"></div>
+
+          <div class="demo-info">
+            <div class="demo-steps">
+              <div class="demo-step"><span class="ds-num">1</span><span>Enter the child's weight (kg)</span></div>
+              <div class="demo-step"><span class="ds-num">2</span><span>Browse drug categories or search</span></div>
+              <div class="demo-step"><span class="ds-num">3</span><span>Tap any drug for full dosing detail</span></div>
+            </div>
+            <div class="demo-install-hint" style="margin-top:.5rem;">
+              <i class="ti ti-download"></i>
+              <span>On mobile: <strong>Add to Home Screen</strong> to install — no app store needed</span>
+            </div>
+            <div class="demo-stats" style="padding-top:.75rem;border-top:1px solid var(--border);">
+              <div class="ds-stat"><i class="ti ti-users"></i><span>100+ active users</span></div>
+              <div class="ds-stat"><i class="ti ti-wifi-off"></i><span>Works offline</span></div>
+              <div class="ds-stat"><i class="ti ti-currency-rupee"></i><span>Lifetime · ₹30</span></div>
+              <div class="ds-stat"><i class="ti ti-device-mobile"></i><span>Installable</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-blocked" id="demoBlocked" style="display:none;">
+          <i class="ti ti-alert-circle"></i>
+          <div>
+            <strong>Embed blocked by browser.</strong> Open directly —
+            <a href="https://ped-resus.vercel.app/" target="_blank" rel="noopener">ped-resus.vercel.app ↗</a>
+          </div>
         </div>
       </div>
-      <div class="project-impact">
-        <span class="impact-stat"><i class="ti ti-wifi-off"></i>Works offline</span>
-        <span class="impact-stat"><i class="ti ti-desktop"></i>Sign-in across all devices</span>
-        <span class="impact-stat"><i class="ti ti-wallet"></i>Lifetime access · INR 30</span>
-        <span class="impact-stat"><i class="ti ti-device-mobile"></i>Installable — no app store</span>
-        <span class="impact-stat"><i class="ti ti-users"></i>100+ active users</span>
-      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ═══ 04 CERTIFICATIONS ═══ -->
+<!-- ═══ 04 CERTIFICATIONS — cards are now direct links to Drive ═══ -->
 <section class="sec sec-hidden" id="certifications">
   <div class="sh" onclick="tog('cB','cI')" role="button" tabindex="0" aria-expanded="false" aria-controls="cB" onkeydown="if(event.key==='Enter'||event.key===' ')tog('cB','cI')">
     <span class="se">04</span><span class="st">Courses &amp; Certifications</span><i class="ti ti-chevron-down si" id="cI" aria-hidden="true"></i>
   </div>
   <div class="sb closed" id="cB">
-    <div class="doc-links">
-      <a class="doc-link" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener"><i class="ti ti-folder-open"></i>View</a>
-    </div>
     <div class="cg">
-      <div class="cc"><div class="ci">American Heart Association</div><div class="cn">Basic Life Support (BLS)</div><div class="cy">2023</div></div>
-      <div class="cc"><div class="ci">American Heart Association</div><div class="cn">Advanced Cardiac Life Support (ACLS)</div><div class="cy">2023</div></div>
-      <div class="cc"><div class="ci">American Heart Association</div><div class="cn">Pediatric Advanced Life Support (PALS)</div><div class="cy">2023</div></div>
-      <div class="cc"><div class="ci">American College of Surgeons</div><div class="cn">Advanced Trauma Life Support (ATLS)</div><div class="cy">2024</div></div>
-      <div class="cc"><div class="ci">ICMR Funded · KMC Manipal</div><div class="cn">Maternal Resuscitation Programme</div><div class="cy">2024</div></div>
-      <div class="cc"><div class="ci">Johns Hopkins University</div><div class="cn">Biostatistics in Public Health</div><div class="cy">2025</div></div>
-      <div class="cc"><div class="ci">Biomedical Research</div><div class="cn">Basic Course in Biomedical Research</div><div class="cy">2024</div></div>
-      <div class="cc"><div class="ci">GCP / GLP</div><div class="cn">Good Clinical &amp; Laboratory Practice</div><div class="cy">2024</div></div>
-      <div class="cc" style="border-top-color:var(--teal);">
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">American Heart Association</div><div class="cn">Basic Life Support (BLS)</div><div class="cy">2023 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">American Heart Association</div><div class="cn">Advanced Cardiac Life Support (ACLS)</div><div class="cy">2023 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">American Heart Association</div><div class="cn">Pediatric Advanced Life Support (PALS)</div><div class="cy">2023 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">American College of Surgeons</div><div class="cn">Advanced Trauma Life Support (ATLS)</div><div class="cy">2024 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">ICMR Funded · KMC Manipal</div><div class="cn">Maternal Resuscitation Programme</div><div class="cy">2024 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">Johns Hopkins University</div><div class="cn">Biostatistics in Public Health</div><div class="cy">2025 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">Biomedical Research</div><div class="cn">Basic Course in Biomedical Research</div><div class="cy">2024 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener">
+        <div class="ci">GCP / GLP</div><div class="cn">Good Clinical &amp; Laboratory Practice</div><div class="cy">2024 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--gold);"></i></div>
+      </a>
+      <a class="cc" href="https://drive.google.com/drive/folders/126DuELY1RR9g2S0TlIwM15Xy9ENmHnkT?usp=sharing" target="_blank" rel="noopener" style="border-top-color:var(--teal);">
         <div class="ci" style="color:var(--teal);">Kasturba Hospital · KMC · MAHE</div>
         <div class="cn">Emergency &amp; Critical Care — EDCRIT</div>
-        <div class="cy">Oct 2022 – Oct 2025</div>
-      </div>
+        <div class="cy">Oct 2022 – Oct 2025 &nbsp;<i class="ti ti-external-link" style="font-size:9px;vertical-align:middle;color:var(--teal);"></i></div>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- ═══ 05 COMPETENCIES — Enhancement 5: radar chart ═══ -->
+<!-- ═══ 05 COMPETENCIES ═══ -->
 <section class="sec sec-hidden" id="competencies">
   <div class="sh" onclick="tog('koB','koI')" role="button" tabindex="0" aria-expanded="false" aria-controls="koB" onkeydown="if(event.key==='Enter'||event.key===' ')tog('koB','koI')">
     <span class="se">05</span><span class="st">Competencies &amp; Areas of Interest</span><i class="ti ti-chevron-down si" id="koI" aria-hidden="true"></i>
   </div>
   <div class="sb closed" id="koB">
-
-    <!-- Radar chart -->
     <div class="radar-wrap">
-      <svg class="radar-svg" id="radarSvg" viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg">
-        <!-- rings at 33%, 66%, 100% -->
-        <!-- axes and polygon drawn by JS -->
-      </svg>
+      <svg class="radar-svg" id="radarSvg" viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="radar-legend" id="radarLegend"></div>
     </div>
-
     <p class="sl" style="margin-top:.5rem;">Core Clinical Skills</p>
     <div class="sk" style="margin-bottom:1rem;">
       <span class="stg">Airway management</span><span class="stg">Trauma resuscitation</span><span class="stg">Point-of-care ultrasound</span><span class="stg">Advanced procedural skills</span><span class="stg">Fracture reductions &amp; splinting</span><span class="stg">EM critical care</span><span class="stg">EM palliative care</span><span class="stg">ED administration &amp; operations</span><span class="stg">Disaster management</span><span class="stg">Clinical research</span><span class="stg">Evidence-based medicine</span><span class="stg">Public health EM</span>
@@ -927,45 +1057,239 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
 </footer>
 
 <script>
+/* ══════════════════════════════════════════════════════════
+   ECG CANVAS — draws a glowing PQRST waveform on a canvas,
+   reading CSS vars so it adapts instantly to dark mode.
+   Two canvases: top bar (tall, vivid) + hero backdrop (faint).
+   ══════════════════════════════════════════════════════════ */
+
+// Build the waveform point list for one cycle (normalised 0-1 y, inverted)
+// Returns array of [x, y] in pixels given (cycleW, h, baseline)
+function ecgCycle(x0, cycleW, h, baseline){
+  // iso, P, iso, QRS, ST, T, iso
+  var pts = [];
+  var u = cycleW;
+  // flat lead-in
+  pts.push([x0,          baseline]);
+  pts.push([x0+u*0.08,   baseline]);
+  // P wave (gentle bump)
+  pts.push([x0+u*0.12,   baseline - h*0.10]);
+  pts.push([x0+u*0.16,   baseline - h*0.18]);
+  pts.push([x0+u*0.20,   baseline - h*0.10]);
+  pts.push([x0+u*0.24,   baseline]);
+  // PR segment
+  pts.push([x0+u*0.30,   baseline]);
+  // Q dip
+  pts.push([x0+u*0.33,   baseline + h*0.08]);
+  // R spike (sharp — tall)
+  pts.push([x0+u*0.36,   baseline - h*0.72]);
+  // S dip
+  pts.push([x0+u*0.39,   baseline + h*0.12]);
+  // ST segment (very slight elevation)
+  pts.push([x0+u*0.44,   baseline - h*0.04]);
+  pts.push([x0+u*0.50,   baseline - h*0.04]);
+  // T wave (broad)
+  pts.push([x0+u*0.56,   baseline - h*0.20]);
+  pts.push([x0+u*0.62,   baseline - h*0.28]);
+  pts.push([x0+u*0.68,   baseline - h*0.20]);
+  pts.push([x0+u*0.74,   baseline]);
+  // flat tail
+  pts.push([x0+u,        baseline]);
+  return pts;
+}
+
+function getCssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+// Draw a single frame: offset drives the scrolling animation
+function drawECG(canvas, offset, opacity, strokeW){
+  var dpr = window.devicePixelRatio || 1;
+  var W = canvas.offsetWidth, H = canvas.offsetHeight;
+  if(!W || !H) return;
+  // resize canvas backing store if needed
+  if(canvas.width !== W*dpr || canvas.height !== H*dpr){
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.getContext('2d').scale(dpr, dpr);
+  }
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  var lineCol  = getCssVar('--ecg-line')  || '#7B1D2E';
+  var glowCol  = getCssVar('--ecg-glow')  || 'rgba(123,29,46,0.55)';
+  var bgCol    = getCssVar('--ecg-bg')    || '#E3D9C4';
+
+  // fill background
+  ctx.fillStyle = bgCol;
+  ctx.fillRect(0, 0, W, H);
+
+  var cycleW   = W * 0.22;          // one PQRST = 22% of width
+  var baseline = H * 0.62;
+  var amplitude= H * 0.68;
+
+  // How many cycles to fill 2× the width (for seamless scroll)
+  var totalCycles = Math.ceil((W * 2) / cycleW) + 2;
+  var startX = -(offset % cycleW) - cycleW;
+
+  // Collect all points
+  var allPts = [];
+  for(var c = 0; c < totalCycles; c++){
+    var pts = ecgCycle(startX + c * cycleW, cycleW, amplitude, baseline);
+    allPts = allPts.concat(pts);
+  }
+
+  // Glow pass (wide, blurred look via shadow)
+  ctx.save();
+  ctx.globalAlpha = opacity * 0.7;
+  ctx.shadowColor = glowCol;
+  ctx.shadowBlur  = 8;
+  ctx.strokeStyle = lineCol;
+  ctx.lineWidth   = strokeW * 2.2;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.beginPath();
+  ctx.moveTo(allPts[0][0], allPts[0][1]);
+  for(var i=1;i<allPts.length;i++) ctx.lineTo(allPts[i][0], allPts[i][1]);
+  ctx.stroke();
+  ctx.restore();
+
+  // Crisp line pass on top
+  ctx.save();
+  ctx.globalAlpha = opacity;
+  ctx.strokeStyle = lineCol;
+  ctx.lineWidth   = strokeW;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.beginPath();
+  ctx.moveTo(allPts[0][0], allPts[0][1]);
+  for(var i=1;i<allPts.length;i++) ctx.lineTo(allPts[i][0], allPts[i][1]);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// Animate both canvases
+var ecgOffset = 0;
+var ecgSpeed  = 1.1; // px per frame
+var ecgRAF;
+
+function ecgTick(){
+  ecgOffset += ecgSpeed;
+  var c1 = document.getElementById('ecgCanvas');
+  var c2 = document.getElementById('heroEcgCanvas');
+  if(c1) drawECG(c1, ecgOffset, 1.0, 1.5);
+  if(c2) drawECG(c2, ecgOffset, 0.18, 1.2);
+  ecgRAF = requestAnimationFrame(ecgTick);
+}
+
+// Re-draw after dark mode toggle so colours update immediately
+function startECG(){
+  if(ecgRAF) cancelAnimationFrame(ecgRAF);
+  ecgTick();
+}
+
+window.addEventListener('load', startECG);
+window.addEventListener('resize', function(){
+  // force canvas resize on next frame
+  var c1=document.getElementById('ecgCanvas');
+  var c2=document.getElementById('heroEcgCanvas');
+  if(c1){c1.width=0;}
+  if(c2){c2.width=0;}
+});
+
+/* ── Demo iframe load / block detection ── */
+function onDemoLoad(){
+  var loading = document.getElementById('demoLoading');
+  if(loading) loading.style.display = 'none';
+  // Try to detect if the iframe content is actually a blocked page
+  // (Chrome shows a net::ERR_... page; we can only detect via timeout)
+}
+// If the iframe hasn't fired onload within 12s, show the fallback notice
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var frame = document.getElementById('pedResusDemoFrame');
+    var loading = document.getElementById('demoLoading');
+    // If loading overlay is still visible, assume blocked
+    if(loading && loading.style.display !== 'none'){
+      loading.style.display = 'none';
+      var blocked = document.getElementById('demoBlocked');
+      if(blocked) blocked.style.display = 'flex';
+    }
+  }, 12000);
+});
+
 /* ── accordion ── */
 function tog(b,i){
   var el=document.getElementById(b),ic=document.getElementById(i);
   if(!el||!ic)return;
   var sh=el.closest('section').querySelector('.sh');
   if(el.classList.contains('closed')){
-    el.classList.remove('closed');el.style.maxHeight=el.scrollHeight+'px';el.style.opacity='1';
-    ic.classList.add('open');if(sh)sh.setAttribute('aria-expanded','true');
-    setTimeout(function(){initCarousel();animateIFBars();drawRadar();},60);
+    el.classList.remove('closed');
+    el.style.maxHeight=el.scrollHeight+'px';
+    el.style.opacity='1';
+    ic.classList.add('open');
+    if(sh) sh.setAttribute('aria-expanded','true');
+    // Trigger after transition completes
+    setTimeout(function(){
+      el.style.maxHeight='none'; // allow content reflow
+      initCarousel();
+      animateIFBars();
+      scheduleRadar();
+    }, 420);
   }else{
-    el.style.maxHeight='0';el.style.opacity='0';el.classList.add('closed');
-    ic.classList.remove('open');if(sh)sh.setAttribute('aria-expanded','false');
+    // re-constrain before collapsing
+    el.style.maxHeight=el.scrollHeight+'px';
+    requestAnimationFrame(function(){
+      el.style.maxHeight='0';
+      el.style.opacity='0';
+      el.classList.add('closed');
+    });
+    ic.classList.remove('open');
+    if(sh) sh.setAttribute('aria-expanded','false');
   }
 }
+
 function togAbout(){
-  var body=document.getElementById('aboutBody'),chev=document.getElementById('aboutChev'),
-      btn=document.getElementById('aboutBtn'),label=document.getElementById('aboutLabel');
+  var body=document.getElementById('aboutBody'),
+      chev=document.getElementById('aboutChev'),
+      btn=document.getElementById('aboutBtn'),
+      label=document.getElementById('aboutLabel');
   if(body.classList.contains('closed')){
-    body.classList.remove('closed');body.style.maxHeight=body.scrollHeight+'px';body.style.opacity='1';
-    chev.classList.add('open');btn.setAttribute('aria-expanded','true');label.textContent='About';
+    body.classList.remove('closed');
+    body.style.maxHeight=body.scrollHeight+'px';
+    body.style.opacity='1';
+    chev.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    label.textContent='About';
   }else{
-    body.style.maxHeight='0';body.style.opacity='0';body.classList.add('closed');
-    chev.classList.remove('open');btn.setAttribute('aria-expanded','false');
+    body.style.maxHeight='0';
+    body.style.opacity='0';
+    body.classList.add('closed');
+    chev.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
     label.textContent='About \u00a0\u2014\u00a0 click to read';
   }
 }
+
 function goTo(id,btn){
   var el=document.getElementById(id);
   if(el){
     var sb=el.querySelector('.sb'),si=el.querySelector('.si'),sh=el.querySelector('.sh');
     if(sb&&sb.classList.contains('closed')){
-      sb.classList.remove('closed');sb.style.maxHeight=sb.scrollHeight+'px';sb.style.opacity='1';
-      if(si)si.classList.add('open');if(sh)sh.setAttribute('aria-expanded','true');
-      setTimeout(function(){initCarousel();animateIFBars();drawRadar();},60);
+      sb.classList.remove('closed');
+      sb.style.maxHeight=sb.scrollHeight+'px';
+      sb.style.opacity='1';
+      if(si) si.classList.add('open');
+      if(sh) sh.setAttribute('aria-expanded','true');
+      setTimeout(function(){
+        sb.style.maxHeight='none';
+        initCarousel();animateIFBars();scheduleRadar();
+      },420);
     }
     setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},50);
   }
   document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
-  if(btn)btn.classList.add('on');
+  if(btn) btn.classList.add('on');
 }
 
 /* ── dark mode ── */
@@ -976,11 +1300,14 @@ function toggleDark(){
   document.getElementById('dmIcon').className=dark?'ti ti-sun':'ti ti-moon';
   document.getElementById('dmLabel').textContent=dark?'Light':'Dark';
   try{localStorage.setItem('sn-theme',dark?'dark':'light');}catch(e){}
-  setTimeout(drawRadar,50);
+  // redraw radar with new colours
+  setTimeout(function(){radarDrawn=false;drawRadar();},50);
+  // ECG re-reads CSS vars each frame — no extra action needed
 }
 try{
   if(localStorage.getItem('sn-theme')==='dark'){
-    dark=true;document.documentElement.setAttribute('data-theme','dark');
+    dark=true;
+    document.documentElement.setAttribute('data-theme','dark');
     document.getElementById('dmIcon').className='ti ti-sun';
     document.getElementById('dmLabel').textContent='Light';
   }
@@ -989,24 +1316,19 @@ try{
 /* ── nav scroll highlight ── */
 var secs=['experience','research','projects','certifications','competencies','conferences','education','awards','languages','interests','photos'];
 var nbs=document.querySelectorAll('.nb');
-if(nbs.length)nbs[0].classList.add('on');
+if(nbs.length) nbs[0].classList.add('on');
 window.addEventListener('scroll',function(){
   var y=window.scrollY+100,cur=secs[0];
   secs.forEach(function(id){var el=document.getElementById(id);if(el&&el.offsetTop<=y)cur=id;});
   nbs.forEach(function(b,i){b.classList.toggle('on',secs[i]===cur);});
 },{passive:true});
 
-/* ══════════════════════════════════════════════════════════
-   Enhancement 3 — IntersectionObserver scroll reveal
-   ══════════════════════════════════════════════════════════ */
+/* ── IntersectionObserver scroll reveal ── */
 (function(){
   if(!window.IntersectionObserver)return;
   var io=new IntersectionObserver(function(entries){
     entries.forEach(function(e){
-      if(e.isIntersecting){
-        e.target.classList.add('sec-visible');
-        io.unobserve(e.target);
-      }
+      if(e.isIntersecting){e.target.classList.add('sec-visible');io.unobserve(e.target);}
     });
   },{threshold:0.08});
   document.querySelectorAll('.sec-hidden').forEach(function(s){io.observe(s);});
@@ -1042,19 +1364,12 @@ function cGo(n){
 function cMove(dir){cGo(cIdx+dir);}
 window.addEventListener('load',initCarousel);
 
-/* ══════════════════════════════════════════════════════════
-   Enhancement 4 — IF impact bar animation
-   Triggered when research section opens; uses IO to
-   fire only when bars are actually visible
-   ══════════════════════════════════════════════════════════ */
+/* ── IF impact bar animation ── */
 var ifAnimated=false;
 function animateIFBars(){
   if(ifAnimated)return;
   var bars=document.querySelectorAll('.if-bar-fill');
   if(!bars.length)return;
-  var allVisible=true;
-  bars.forEach(function(b){if(!b.offsetParent)allVisible=false;});
-  if(!allVisible)return;
   ifAnimated=true;
   bars.forEach(function(b){
     var val=parseFloat(b.getAttribute('data-if'))||0;
@@ -1065,8 +1380,9 @@ function animateIFBars(){
 }
 
 /* ══════════════════════════════════════════════════════════
-   Enhancement 5 — Hexagonal radar chart
-   6 axes at 0°, 60°, 120°, 180°, 240°, 300°
+   RADAR CHART — fixed: removed offsetParent check,
+   uses scheduleRadar() which polls until the SVG has
+   a non-zero bounding rect before drawing.
    ══════════════════════════════════════════════════════════ */
 var radarDrawn=false;
 var radarData=[
@@ -1077,19 +1393,37 @@ var radarData=[
   {label:'Research',     val:0.80},
   {label:'Teaching',     val:0.85}
 ];
+
+function scheduleRadar(){
+  // Poll until SVG has layout (happens after accordion transition)
+  var attempts=0;
+  function tryDraw(){
+    var svg=document.getElementById('radarSvg');
+    if(!svg){return;}
+    var rect=svg.getBoundingClientRect();
+    if(rect.width > 0){
+      radarDrawn=false; // force redraw
+      drawRadar();
+    } else if(attempts++ < 25){
+      setTimeout(tryDraw, 60);
+    }
+  }
+  tryDraw();
+}
+
 function drawRadar(){
   var svg=document.getElementById('radarSvg');
-  if(!svg||!svg.offsetParent)return;
-  // clear
+  if(!svg) return;
   svg.innerHTML='';
-  var cx=150,cy=148,r=100;
+
+  var cx=150, cy=148, r=100;
   var n=radarData.length;
   var ns='http://www.w3.org/2000/svg';
-  // CSS var resolution
   var st=getComputedStyle(document.documentElement);
   var cBorder=st.getPropertyValue('--border').trim()||'#CFC4AE';
-  var cMuted=st.getPropertyValue('--muted').trim()||'#6B5C48';
-  var cTeal=st.getPropertyValue('--teal').trim()||'#0A6B6F';
+  var cMuted =st.getPropertyValue('--muted').trim() ||'#6B5C48';
+  var cTeal  =st.getPropertyValue('--teal').trim()  ||'#0A6B6F';
+  var cWine  =st.getPropertyValue('--wine').trim()  ||'#7B1D2E';
 
   function pt(i,radius){
     var a=(Math.PI*2/n)*i - Math.PI/2;
@@ -1119,7 +1453,7 @@ function drawRadar(){
     svg.appendChild(line);
   }
 
-  // data polygon
+  // filled data polygon
   var webPoints=[];
   for(var i=0;i<n;i++){var p=pt(i,r*radarData[i].val);webPoints.push(p[0]+','+p[1]);}
   var web=document.createElementNS(ns,'polygon');
@@ -1127,7 +1461,7 @@ function drawRadar(){
   web.setAttribute('class','radar-web');
   svg.appendChild(web);
 
-  // dots on vertices
+  // vertex dots
   for(var i=0;i<n;i++){
     var p=pt(i,r*radarData[i].val);
     var dot=document.createElementNS(ns,'circle');
@@ -1137,7 +1471,7 @@ function drawRadar(){
     svg.appendChild(dot);
   }
 
-  // labels
+  // axis labels
   for(var i=0;i<n;i++){
     var lp=pt(i,r+18);
     var txt=document.createElementNS(ns,'text');
@@ -1151,7 +1485,7 @@ function drawRadar(){
 
   // legend
   var leg=document.getElementById('radarLegend');
-  if(leg&&!radarDrawn){
+  if(leg){
     leg.innerHTML='';
     radarData.forEach(function(d){
       var item=document.createElement('div');
@@ -1165,6 +1499,7 @@ function drawRadar(){
   }
   radarDrawn=true;
 }
+
 window.addEventListener('load',function(){
   setTimeout(function(){drawRadar();animateIFBars();},200);
 });
