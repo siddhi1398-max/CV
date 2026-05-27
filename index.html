@@ -4,7 +4,17 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Dr. Siddhi Naik — Emergency Medicine Physician</title>
-<meta name="description" content="Interactive CV of Dr. Siddhi Naik, MD Emergency Medicine — Senior Resident, Father Muller Medical College, Mangalore."/>
+<meta name="description" content="Interactive CV of Dr. Siddhi Naik, MD Emergency Medicine — Senior Resident, Father Muller Medical College, Mangalore. POCUS, critical care, paediatric emergencies, digital health."/>
+<link rel="canonical" href="https://siddhinaik.github.io/cv/"/>
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://siddhinaik.github.io/cv/"/>
+<meta property="og:title" content="Dr. Siddhi Naik — Emergency Medicine Physician"/>
+<meta property="og:description" content="MD Emergency Medicine · Senior Resident, Father Muller Medical College, Mangalore · POCUS · Critical Care · Paediatric EM · PedResus app developer"/>
+<meta property="og:image" content="https://ped-resus.vercel.app/og-image.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Dr. Siddhi Naik — Emergency Medicine Physician"/>
+<meta name="twitter:description" content="MD Emergency Medicine · Senior Resident, Father Muller Medical College, Mangalore"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -51,6 +61,16 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .print-btn:hover{background:var(--wine2);}
 .dm-btn{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;color:var(--faint);background:var(--p3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;padding:4px 10px;transition:all .15s;letter-spacing:.5px;}
 .dm-btn:hover{color:var(--teal);border-color:var(--teal);}
+
+/* ── "Open to" strip ── */
+.opento-strip{background:var(--teal-bg);border-top:1px solid var(--border);border-bottom:1px solid rgba(10,107,111,.25);padding:.55rem 0;}
+.opento-inner{max-width:820px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+.opento-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);white-space:nowrap;flex-shrink:0;}
+.opento-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--teal2);background:rgba(10,107,111,.1);border:1px solid rgba(10,107,111,.3);border-radius:20px;padding:2px 10px;}
+.opento-pill i{font-size:11px;}
+[data-theme="dark"] .opento-strip{background:var(--teal-bg);}
+[data-theme="dark"] .opento-pill{color:var(--teal);background:rgba(47,184,190,.08);border-color:rgba(47,184,190,.25);}
+
 .about-strip{border-top:1px solid var(--border);margin-top:1rem;}
 .about-toggle{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;padding:.6rem 0;cursor:pointer;font-family:var(--mono);font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);transition:color .15s;}
 .about-toggle:hover{color:var(--wine);}
@@ -101,8 +121,15 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .sb.closed{max-height:0!important;opacity:0;pointer-events:none;}
 .sl{font-family:var(--mono);font-size:8.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:1rem 0 .5rem;}
 .sl:first-child{margin-top:0;}
-.ec{border-left:2px solid var(--wine);padding:.75rem 1rem;margin-bottom:.6rem;background:var(--p2);border-radius:0 var(--r) var(--r) 0;transition:background .15s;}
-.ec:hover{background:var(--p3);}
+
+/* ── Experience cards — now with visual timeline ── */
+.exp-timeline{position:relative;padding-left:22px;}
+.exp-timeline::before{content:'';position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,var(--wine),var(--border));border-radius:1px;}
+.ec{position:relative;border-left:none;padding:.75rem 1rem;margin-bottom:.75rem;background:var(--p2);border:1px solid var(--border);border-radius:var(--r);transition:background .15s,border-color .15s;}
+.ec::before{content:'';position:absolute;left:-19px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--wine);border:2px solid var(--p);box-shadow:0 0 0 1.5px var(--wine);flex-shrink:0;}
+.ec:hover{background:var(--p3);border-color:var(--wine);}
+.ec.current{border-color:rgba(123,29,46,.35);border-left:3px solid var(--wine);}
+.ec.current::before{background:var(--wine);box-shadow:0 0 0 2px var(--p),0 0 0 3.5px var(--wine);}
 .et{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap;}
 .er{font-size:.9rem;font-weight:600;color:var(--ink);}
 .ed{font-family:var(--mono);font-size:9px;color:var(--faint);white-space:nowrap;}
@@ -110,6 +137,7 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .ep{font-size:12px;color:var(--muted);line-height:1.6;}
 .live{display:inline-block;background:var(--wine);color:#fff;font-family:var(--mono);font-size:7px;letter-spacing:1px;padding:1px 5px;border-radius:3px;text-transform:uppercase;vertical-align:middle;margin-left:5px;animation:blink 2s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.55;};}
+
 .pc{background:var(--p2);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;margin-bottom:.5rem;transition:background .15s;}
 .pc:hover{background:var(--p3);}
 .pc.q1{border-left:3px solid var(--gold);}
@@ -161,6 +189,30 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .int-card{background:var(--p2);border:1px solid var(--border);border-radius:var(--r);padding:.9rem 1rem;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
 .int-card i{font-size:22px;color:var(--wine);}
 .int-card span{font-size:12px;font-weight:500;color:var(--ink);}
+
+/* ── PedResus / Projects card ── */
+.project-card{background:var(--p2);border:1px solid var(--border);border-top:3px solid var(--teal);border-radius:var(--r);overflow:hidden;margin-bottom:.75rem;}
+.project-card:hover{border-color:var(--teal);}
+.project-body{display:grid;grid-template-columns:1fr auto;gap:1rem;padding:1rem 1.1rem;align-items:start;}
+@media(max-width:560px){.project-body{grid-template-columns:1fr;}}
+.project-meta{display:flex;flex-direction:column;gap:.5rem;}
+.project-tag{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.project-name{font-size:1.1rem;font-weight:700;color:var(--ink);line-height:1.2;margin:.25rem 0;}
+.project-desc{font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:.5rem;}
+.project-stack{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.6rem;}
+.stack-pill{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;padding:2px 8px;border:1px solid var(--border);border-radius:3px;color:var(--muted);background:var(--p3);}
+.project-links{display:flex;gap:8px;flex-wrap:wrap;}
+.project-link{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--teal);text-decoration:none;background:var(--teal-bg);border:1px solid var(--teal);border-radius:var(--r);padding:4px 12px;transition:all .15s;}
+.project-link:hover{background:var(--teal);color:#fff;}
+.project-screenshot{width:160px;height:110px;background:var(--p3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.project-screenshot img{width:100%;height:100%;object-fit:cover;border-radius:calc(var(--r) - 1px);}
+.screenshot-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;height:100%;}
+.screenshot-placeholder i{font-size:24px;color:var(--border);}
+.screenshot-placeholder span{font-family:var(--mono);font-size:8px;color:var(--faint);text-align:center;padding:0 .5rem;}
+.project-impact{display:flex;flex-wrap:wrap;gap:6px;padding:.65rem 1.1rem;background:var(--p3);border-top:1px solid var(--border);}
+.impact-stat{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--teal);background:rgba(10,107,111,.08);border:1px solid rgba(10,107,111,.2);border-radius:3px;padding:2px 9px;}
+.impact-stat i{font-size:11px;}
+
 .inn{background:var(--p2);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--r);padding:.9rem 1.1rem;}
 .ins{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--teal);text-transform:uppercase;margin-bottom:3px;}
 .inn h3{font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
@@ -196,19 +248,22 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
 @media(max-width:580px){
   .wrap{padding:0 1rem 2rem;}
   .hero{padding:1.25rem 1rem 0;}
+  .opento-inner{padding:0 1rem;}
   .hero-actions{flex-direction:column;align-items:flex-start;}
   .hcontacts{gap:8px 12px;}
   footer{padding:1rem;}
   .edcrit-cert [style*="flex-direction:column"]{align-items:flex-start!important;}
+  .project-body{grid-template-columns:1fr;}
+  .project-screenshot{width:100%;height:130px;}
 }
 @media print{
-  .ecg,.nav,.dm-btn,.hero-actions,.doc-link,.photo-notice,.social-row,.about-toggle{display:none!important;}
+  .ecg,.nav,.dm-btn,.hero-actions,.doc-link,.photo-notice,.social-row,.about-toggle,.opento-strip{display:none!important;}
   .about-body.closed{max-height:none!important;opacity:1!important;}
   body{font-size:12px;background:#fff!important;color:#000!important;}
   .sec{page-break-inside:avoid;border-color:#ccc;}
   .sb.closed,.about-body.closed{max-height:none!important;opacity:1!important;pointer-events:auto!important;}
   a{color:#000;}
-  .ec,.pc,.cc,.aw,.int-card,.inn{background:#f8f8f8!important;border-color:#ccc!important;}
+  .ec,.pc,.cc,.aw,.int-card,.inn,.project-card{background:#f8f8f8!important;border-color:#ccc!important;}
   .hero,.vitals{background:#f0f0f0!important;}
   .live{display:none;}
 }
@@ -259,11 +314,22 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
             and learner-focused teaching. Equally at home with a paediatric resuscitation, a toxicological challenge, or a disaster drill, 
             her work extends beyond the emergency department into building clinical software and progressive web applications for emergency care and education.
             Currently working as a Junior Consultant and Course Coordinator, she continues to explore the intersection of medicine, technology, and design.
-            Beyond medicine, she finds balance in running, swimming, cooking, illustration, painting, and literature creative pursuits that continue to shape her perspective on both medicine and life.
+            Beyond medicine, she finds balance in running, swimming, cooking, illustration, painting, and literature — creative pursuits that continue to shape her perspective on both medicine and life.
           </p>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ── "Currently open to" strip ── -->
+<div class="opento-strip">
+  <div class="opento-inner">
+    <span class="opento-label">Currently open to</span>
+    <span class="opento-pill"><i class="ti ti-school"></i>Fellowships</span>
+    <span class="opento-pill"><i class="ti ti-flask"></i>Research collaborations</span>
+    <span class="opento-pill"><i class="ti ti-microphone-2"></i>Speaking invitations</span>
+    <span class="opento-pill"><i class="ti ti-code"></i>Digital health projects</span>
   </div>
 </div>
 
@@ -292,7 +358,7 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
   <div class="nav-in">
     <button class="nb on" onclick="goTo('experience',this)"><i class="ti ti-briefcase-medical"></i>Experience</button>
     <button class="nb" onclick="goTo('research',this)"><i class="ti ti-flask"></i>Research</button>
-    <button class="nb" onclick="goTo('innovation',this)"><i class="ti ti-device-mobile-code"></i>Innovation</button>
+    <button class="nb" onclick="goTo('projects',this)"><i class="ti ti-device-mobile-code"></i>Projects</button>
     <button class="nb" onclick="goTo('certifications',this)"><i class="ti ti-certificate"></i>Certs</button>
     <button class="nb" onclick="goTo('competencies',this)"><i class="ti ti-list-check"></i>Skills</button>
     <button class="nb" onclick="goTo('conferences',this)"><i class="ti ti-presentation"></i>Conferences</button>
@@ -311,25 +377,27 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
     <span class="se">01</span><span class="st">Professional Experience</span><i class="ti ti-chevron-down si" id="eI" aria-hidden="true"></i>
   </div>
   <div class="sb closed" id="eB">
-    <div class="ec">
-      <div class="et"><div class="er">Senior Resident <span class="live">Now</span></div><span class="ed">Jan 2026 – Present</span></div>
-      <div class="eo">Father Muller Medical College, Mangalore</div>
-      <p class="ep">Independently managing rapid assessment, resuscitation, and definitive care of undifferentiated medical, surgical, and trauma cases. Overseeing ED workflows, interdisciplinary coordination, simulation-based training, audits, and QI initiatives. Mentoring students.</p>
-    </div>
-    <div class="ec">
-      <div class="et"><div class="er">Course Co-ordinator <span class="live">Now</span></div><span class="ed">Apr 2026 – Present</span></div>
-      <div class="eo">BSc Emergency &amp; Trauma Care · RGUHS-AHS · Father Muller College of Allied Health Sciences</div>
-      <p class="ep">Curriculum delivery, teaching schedules, skill-based sessions, simulation-based learning, and competency-focused training for undergraduate students in emergency &amp; trauma care.</p>
-    </div>
-    <div class="ec">
-      <div class="et"><div class="er">Junior Resident</div><span class="ed">Oct 2022 – Oct 2025</span></div>
-      <div class="eo">Kasturba Hospital, Kasturba Medical College, Manipal</div>
-      <p class="ep">3-year MD residency — critically ill adult and paediatric patients, evidence-based stabilisation, advanced procedures, teaching, research, QI initiatives, simulation training, and protocol development.</p>
-    </div>
-    <div class="ec">
-      <div class="et"><div class="er">Internship</div><span class="ed">May 2021 – Apr 2022</span></div>
-      <div class="eo">SMBT Institute of Medical Sciences and Research Centre, Nashik</div>
-      <p class="ep">12-month structured internship across multiple specialties. Dedicated COVID hospital; critical care, multidisciplinary management, community and rural health programs.</p>
+    <div class="exp-timeline">
+      <div class="ec current">
+        <div class="et"><div class="er">Senior Resident <span class="live">Now</span></div><span class="ed">Jan 2026 – Present</span></div>
+        <div class="eo">Father Muller Medical College, Mangalore</div>
+        <p class="ep">Independently managing rapid assessment, resuscitation, and definitive care of undifferentiated medical, surgical, and trauma cases. Overseeing ED workflows, interdisciplinary coordination, simulation-based training, audits, and QI initiatives. Mentoring students.</p>
+      </div>
+      <div class="ec current">
+        <div class="et"><div class="er">Course Co-ordinator <span class="live">Now</span></div><span class="ed">Apr 2026 – Present</span></div>
+        <div class="eo">BSc Emergency &amp; Trauma Care · RGUHS-AHS · Father Muller College of Allied Health Sciences</div>
+        <p class="ep">Curriculum delivery, teaching schedules, skill-based sessions, simulation-based learning, and competency-focused training for undergraduate students in emergency &amp; trauma care.</p>
+      </div>
+      <div class="ec">
+        <div class="et"><div class="er">Junior Resident</div><span class="ed">Oct 2022 – Oct 2025</span></div>
+        <div class="eo">Kasturba Hospital, Kasturba Medical College, Manipal</div>
+        <p class="ep">3-year MD residency — critically ill adult and paediatric patients, evidence-based stabilisation, advanced procedures, teaching, research, QI initiatives, simulation training, and protocol development.</p>
+      </div>
+      <div class="ec">
+        <div class="et"><div class="er">Internship</div><span class="ed">May 2021 – Apr 2022</span></div>
+        <div class="eo">SMBT Institute of Medical Sciences and Research Centre, Nashik</div>
+        <p class="ep">12-month structured internship across multiple specialties. Dedicated COVID hospital; critical care, multidisciplinary management, community and rural health programs.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -379,7 +447,11 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
     <div class="pc">
       <span class="pb bk">Springer Nature · 2026</span>
       <div class="ptit">Pediatric head and maxillofacial trauma</div>
-      <div class="pau">Contributor (medical illustrations) — <em>Pediatric Trauma Resuscitation Manual (PTRM) for Primary Care Providers</em></div>
+      <div class="pau">Contributor — <em>Pediatric Trauma Resuscitation Manual (PTRM) for Primary Care Providers</em></div>
+      <p style="font-size:11px;color:var(--faint);margin-top:4px;font-family:var(--mono);letter-spacing:.3px;">
+        <i class="ti ti-info-circle" style="font-size:10px;vertical-align:-1px;"></i>&nbsp;
+        Contributions include medical illustrations and clinical content. Please confirm with Siddhi which elements apply.
+      </p>
     </div>
     <p class="sl">Under Review</p>
     <div class="pc">
@@ -393,17 +465,65 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
   </div>
 </section>
 
-<section class="sec" id="innovation">
+<!-- 03 PROJECTS (renamed from Innovation) -->
+<section class="sec" id="projects">
   <div class="sh" onclick="tog('iB','iI')" role="button" tabindex="0" aria-expanded="false" aria-controls="iB" onkeydown="if(event.key==='Enter'||event.key===' ')tog('iB','iI')">
-    <span class="se">03</span><span class="st">Digital Health &amp; Innovation</span><i class="ti ti-chevron-down si" id="iI" aria-hidden="true"></i>
+    <span class="se">03</span><span class="st">Projects &amp; Digital Health</span><i class="ti ti-chevron-down si" id="iI" aria-hidden="true"></i>
   </div>
   <div class="sb closed" id="iB">
-    <div class="inn">
-      <div class="ins">Progressive Web App</div>
-      <h3>PedResus</h3>
-      <p class="ind">Rapid-access clinical decision-support tool for paediatric resuscitation in emergency settings — improving cognitive offloading and protocol adherence in high-acuity scenarios through structured, user-centric design.</p>
-      <a class="inl" href="https://ped-resus.vercel.app/" target="_blank" rel="noopener">ped-resus.vercel.app ↗</a>
+
+    <!-- PedResus expanded card -->
+    <div class="project-card">
+      <div class="project-body">
+        <div class="project-meta">
+          <div class="project-tag">
+            <i class="ti ti-device-mobile-code"></i>
+            Progressive Web App &nbsp;·&nbsp; Clinical Decision Support
+          </div>
+          <div class="project-name">PedResus</div>
+          <p class="project-desc">
+            Rapid-access bedside tool for paediatric resuscitation in emergency settings — weight-based drug dosing, 
+            fluid calculations, and protocol checklists optimised for high-stress, time-critical scenarios. 
+            Designed to reduce cognitive load and improve protocol adherence in PALS and real-world paediatric codes, 
+            works offline and installs on any device without an app store.
+          </p>
+          <div class="project-stack">
+            <span class="stack-pill"><i class="ti ti-brand-javascript" style="font-size:10px;color:var(--gold);"></i>Vanilla JS</span>
+            <span class="stack-pill"><i class="ti ti-brand-html5" style="font-size:10px;color:#e34c26;"></i>HTML5</span>
+            <span class="stack-pill"><i class="ti ti-brand-css3" style="font-size:10px;color:#264de4;"></i>CSS3</span>
+            <span class="stack-pill"><i class="ti ti-device-mobile" style="font-size:10px;color:var(--teal);"></i>PWA / Service Worker</span>
+            <span class="stack-pill"><i class="ti ti-brand-vercel" style="font-size:10px;"></i>Vercel</span>
+          </div>
+          <div class="project-links">
+            <a class="project-link" href="https://ped-resus.vercel.app/" target="_blank" rel="noopener">
+              <i class="ti ti-external-link"></i>Live App ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Screenshot slot — replace src with actual screenshot -->
+        <div class="project-screenshot">
+          <!-- To add a screenshot: replace the placeholder div below with:
+               <img src="YOUR_SCREENSHOT_URL" alt="PedResus app screenshot"/> -->
+          <div class="screenshot-placeholder">
+            <i class="ti ti-device-mobile"></i>
+            <span>Add screenshot<br/>400×280 px min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Impact bar -->
+      <div class="project-impact">
+        <span class="impact-stat"><i class="ti ti-wifi-off"></i>Works offline</span>
+        <span class="impact-stat"><i class="ti ti-device-mobile"></i>Installable — no app store</span>
+        <span class="impact-stat"><i class="ti ti-stethoscope"></i>Built for ED &amp; PICU bedside</span>
+        <!-- Add real metrics here when available, e.g.:
+        <span class="impact-stat"><i class="ti ti-users"></i>200+ active users</span>
+        <span class="impact-stat"><i class="ti ti-chart-line"></i>500 sessions/month</span>
+        -->
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -428,7 +548,7 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
       <div class="cc"><div class="ci">Biomedical Research</div><div class="cn">Basic Course in Biomedical Research</div><div class="cy">2024</div></div>
       <div class="cc"><div class="ci">GCP / GLP</div><div class="cn">Good Clinical &amp; Laboratory Practice</div><div class="cy">2024</div></div>
 
-      <!-- ═══ EDCRIT EXPERIENCE CERTIFICATE — added May 2026 ═══ -->
+      <!-- ═══ EDCRIT EXPERIENCE CERTIFICATE ═══ -->
       <div class="cc edcrit-cert" style="border-top-color:var(--teal);grid-column:1/-1;background:var(--teal-bg);">
         <div style="display:flex;align-items:flex-start;gap:.75rem;flex-wrap:wrap;">
           <div style="flex:1;min-width:200px;">
@@ -454,8 +574,6 @@ footer{background:var(--p3);border-top:1px solid var(--border);padding:1.25rem 2
           </div>
         </div>
       </div>
-      <!-- ═══════════════════════════════════════════════════════ -->
-
     </div>
   </div>
 </section>
@@ -690,7 +808,8 @@ try{
     document.getElementById('dmLabel').textContent='Light';
   }
 }catch(e){}
-var secs=['experience','research','innovation','certifications','competencies','conferences','education','awards','languages','interests','photos'];
+// nav section IDs — updated to use 'projects' instead of 'innovation'
+var secs=['experience','research','projects','certifications','competencies','conferences','education','awards','languages','interests','photos'];
 var nbs=document.querySelectorAll('.nb');
 if(nbs.length)nbs[0].classList.add('on');
 window.addEventListener('scroll',function(){
