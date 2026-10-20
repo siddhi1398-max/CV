@@ -16,7 +16,7 @@
 <meta name="twitter:description" content="MD Emergency Medicine · Senior Resident, Father Muller Medical College, Mangalore"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
 <style>
 /* ─── TOKENS ─────────────────────────────────────────────── */
@@ -691,6 +691,86 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
   .hero,.vitals{background:#f0f0f0!important;}
   .live{display:none;}
   .tl-wrap::before{background:#ccc;}
+}
+  /* ═════════ REFINEMENT PATCH ═════════ */
+:root{--serif:'Fraunces',Georgia,serif;--sans:'Instrument Sans',system-ui,sans-serif;}
+body{font-size:15.5px;line-height:1.65;}
+
+/* Type: bigger, warmer, more readable */
+.hname{font-family:var(--serif);font-size:clamp(2.6rem,5.5vw,4.8rem);font-weight:600;letter-spacing:-.025em;line-height:1;}
+.hname span{background:linear-gradient(90deg,var(--wine),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.st{font-family:var(--serif);font-size:1.7rem;font-weight:600;letter-spacing:-.01em;}
+.er,.edg{font-family:var(--serif);font-size:1.1rem;font-weight:600;}
+.vv{font-family:var(--serif);font-size:2.1rem;}
+.hrole{font-size:14.5px;}
+.about-text{font-size:15px;line-height:1.75;}
+.ep{font-size:14px;}
+.eo,.ein{font-size:13.5px;}
+.ptit{font-size:15px;}
+.pau{font-size:12.5px;}
+.cn{font-size:14.5px;}
+.stg,.cpp{font-size:12.5px;}
+.awt{font-size:14px;}
+.htag,.se,.sl,.ed,.ey,.ere,.vl,.ci,.cy,.pmet,.if-chip{font-size:11px;}
+.vv-sub,.hc{font-size:11.5px;}
+.nb{font-size:10.5px;padding:10px 16px;}
+.nb i{font-size:17px;}
+
+/* Cursor glow on cards */
+.pc,.cc,.vit,.aw{position:relative;overflow:hidden;}
+.pc::after,.cc::after,.vit::after,.aw::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),rgba(10,107,111,.14),transparent 70%);
+}
+.pc:hover::after,.cc:hover::after,.vit:hover::after,.aw:hover::after{opacity:1;}
+
+/* Scroll progress bar */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:1000;background:linear-gradient(90deg,var(--wine),var(--teal));}
+
+/* ─── DESKTOP: use the width ─── */
+@media(min-width:1000px){
+  .hi,.nav-in,.vi,.opento-inner,.footer-in{max-width:1240px;}
+  .wrap{max-width:1240px;display:grid;grid-template-columns:repeat(12,1fr);column-gap:2.5rem;padding:0 2rem 4rem;}
+  .sec{grid-column:1/-1;padding:1.5rem 0;}
+  .sh{margin-bottom:.9rem;}
+
+  /* Hero: bigger, split feel */
+  .hero{padding:3.5rem 2rem 0;}
+  .hero-top{align-items:center;gap:2.5rem;}
+  .avatar{width:150px;height:150px;}
+  .av-face{font-size:2.6rem;}
+  .hcontacts{gap:10px 22px;}
+  .vitals{padding:1.4rem 0;}
+  .vit{padding:1.1rem 1.3rem;}
+
+  /* Research: two columns */
+  #rB{display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1.25rem;align-items:start;}
+  #rB>.sl,#rB>div:last-child{grid-column:1/-1;}
+  #rB .pc{margin-bottom:0;height:100%;}
+
+  /* Certifications: three columns */
+  #certifications .cg{grid-template-columns:repeat(3,1fr);gap:12px;}
+
+  /* Conferences: two columns */
+  #cfB{display:grid;grid-template-columns:1fr 1fr;gap:0 2.5rem;align-items:start;}
+
+  /* Awards | Languages | Interests side by side */
+  #awards{grid-column:1/5;}
+  #languages{grid-column:5/9;}
+  #interests{grid-column:9/13;}
+  #languages .lp{grid-template-columns:1fr;}
+  #interests .int-grid{grid-template-columns:repeat(2,1fr);}
+
+  /* Experience: wider cards, dates feel like a ledger */
+  .tl-wrap{--tl-card-pad-left:48px;--tl-line-left:20px;}
+  .ec{padding:1.1rem 1.4rem;}
+  .ec .et{align-items:center;}
+
+  /* Projects: larger phone */
+  .demo-outer{grid-template-columns:320px 1fr;gap:3rem;}
+  .phone-frame{width:290px;}
+  .phone-screen{height:560px;}
+  .phone-screen iframe{transform:scale(calc(270/375));}
 }
 </style>
 </head>
@@ -1941,6 +2021,42 @@ function drawRadar(){
     av.setAttribute('aria-pressed',String(av.getAttribute('aria-pressed')!=='true'));
     av.classList.add('seen');
   });
+})();
+</script>
+  <script>
+(function(){
+  /* scroll progress bar */
+  var bar=document.createElement('div');bar.id='prog';document.body.appendChild(bar);
+  addEventListener('scroll',function(){
+    var h=document.documentElement,m=h.scrollHeight-h.clientHeight;
+    bar.style.width=(m>0?h.scrollTop/m*100:0)+'%';
+  },{passive:true});
+
+  /* cursor-follow glow */
+  document.addEventListener('mousemove',function(e){
+    var c=e.target.closest&&e.target.closest('.pc,.cc,.vit,.aw');if(!c)return;
+    var r=c.getBoundingClientRect();
+    c.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    c.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+
+  /* desktop: open every section by default (mobile keeps accordions) */
+  function openAll(){
+    if(innerWidth<1000)return;
+    document.querySelectorAll('.sb.closed').forEach(function(sb){
+      sb.classList.remove('closed');
+      sb.style.maxHeight='none';
+      sb.style.opacity='1';
+      var s=sb.closest('section');if(!s)return;
+      var i=s.querySelector('.si'),h=s.querySelector('.sh');
+      if(i)i.classList.add('open');
+      if(h)h.setAttribute('aria-expanded','true');
+    });
+    var ab=document.getElementById('aboutBody');
+    if(ab&&ab.classList.contains('closed'))togAbout();
+    setTimeout(function(){try{scheduleRadar();animateIFBars();}catch(e){}},150);
+  }
+  addEventListener('load',openAll);
 })();
 </script>
 </body>
