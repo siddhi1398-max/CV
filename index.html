@@ -405,6 +405,21 @@ a.cc:hover .cc, a.cc:hover{background:var(--gold-bg);border-color:var(--gold);tr
 .cpp.og{border-color:var(--gold);color:var(--gold);}
 .cpp.fc{border-color:var(--teal);color:var(--teal);}
 
+/* rhythm simulator strip */
+.ecg-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:6px 12px;background:var(--p2);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;}
+.ecg-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-right:2px;}
+.ecg-chip{font:inherit;font-size:10px;letter-spacing:.5px;color:var(--muted);background:var(--p);border:1px solid var(--border);border-radius:4px;padding:3px 10px;cursor:pointer;transition:all .15s;}
+.ecg-chip:hover{border-color:var(--teal);color:var(--teal);}
+.ecg-chip.on{background:var(--teal);border-color:var(--teal);color:#fff;}
+.ecg-act{font:inherit;font-size:10px;font-weight:700;letter-spacing:1px;color:#fff;background:var(--wine);border:none;border-radius:4px;padding:4px 12px;cursor:pointer;}
+.ecg-act:disabled{opacity:.6;cursor:default;}
+.ecg-act.ready{background:#c8102e;animation:readyPulse .6s ease-in-out infinite alternate;}
+@keyframes readyPulse{from{box-shadow:0 0 0 0 rgba(200,16,46,.6);}to{box-shadow:0 0 0 6px rgba(200,16,46,0);}}
+.ecg-status{flex:1;min-width:180px;color:var(--muted);font-size:10px;line-height:1.4;}
+.ecg-bar::after{content:'';position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;}
+.ecg-bar.shock::after{animation:shockFlash .6s ease-out;}
+@keyframes shockFlash{0%{opacity:.95;}100%{opacity:0;}}
+@media print{.ecg-ctl{display:none!important;}}
 /* ─── AWARDS ─────────────────────────────────────────────── */
 .aw{display:flex;align-items:center;gap:10px;padding:.7rem 1rem;background:var(--p2);border:1px solid var(--border);border-radius:8px;border-left:3px solid var(--gold);margin-bottom:.5rem;transition:background .15s,box-shadow .2s,transform .2s;}
 .aw:hover{background:var(--gold-bg);box-shadow:0 4px 14px rgba(217,119,6,.12);transform:translateX(2px);}
@@ -681,8 +696,17 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
 <button id="bpmBtn" type="button" title="Click to change heart rate" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--ecg-line);background:var(--p);border:1px solid var(--border);border-radius:4px;padding:3px 9px;cursor:pointer;">♥ <b id="bpmVal">72</b> bpm</button></div>
 
 <!-- ─── HERO ────────────────────────────────────────────── -->
-<div class="hero">
-  <!-- Hero ECG backdrop — canvas -->
+<div class="ecg-ctl" role="group" aria-label="ECG rhythm simulator">
+  <span class="ecg-lbl">Rhythm sim</span>
+  <button class="ecg-chip on" data-m="sinus" type="button">Sinus</button>
+  <button class="ecg-chip" data-m="vt" type="button">VT</button>
+  <button class="ecg-chip" data-m="vf" type="button">VF</button>
+  <button class="ecg-chip" data-m="asys" type="button">Asystole</button>
+  <button id="ecgAct" class="ecg-act" type="button" style="display:none;"></button>
+  <span id="ecgStatus" class="ecg-status" aria-live="polite">Pick a rhythm. Try VF, then charge and shock.</span>
+</div>
+
+<div class="hero">  <!-- Hero ECG backdrop — canvas -->
   <div class="hero-ecg-bg" aria-hidden="true">
     <canvas id="heroEcgCanvas"></canvas>
   </div>
@@ -1227,6 +1251,80 @@ function ecgCycle(x0, cycleW, h, baseline){
   return pts;
 }
 
+/* ── Rhythm simulator ── */
+var ecgMode='sinus';
+
+function ecgAlt(mode,W,baseline,amp,offset){
+  var pts=[];
+  for(var x=-6;x<=W+6;x+=3){
+    var u=x+offset,y;
+    if(mode==='vf'){
+      y=Math.sin(u*0.047)*Math.sin(u*0.0113+1)+0.6*Math.sin(u*0.083+2)+0.4*Math.sin(u*0.029+0.5);
+      y*=0.28;
+    }else if(mode==='vt'){
+      var s=Math.sin(u*0.075);
+      y=0.5*(s<0?-Math.pow(-s,0.6):Math.pow(s,0.6));
+    }else{
+      y=0.015*Math.sin(u*0.02)+0.01*Math.sin(u*0.071);
+    }
+    pts.push([x,baseline-amp*y]);
+  }
+  return pts;
+}
+
+(function(){
+  var act=document.getElementById('ecgAct'),st=document.getElementById('ecgStatus'),
+      bar=document.querySelector('.ecg-bar'),bpm=document.getElementById('bpmBtn'),
+      chips=document.querySelectorAll('.ecg-chip'),state='idle',timers=[];
+  if(!act||!st||!bar)return;
+  var MSG={
+    sinus:'Normal sinus rhythm. Pick a rhythm. Try VF, then charge and shock.',
+    vt:'Pulseless VT. Shockable. Charge and shock.',
+    vf:'Ventricular fibrillation. Shockable. Charge and shock.',
+    asys:'Asystole. NOT shockable. CPR and adrenaline.'
+  };
+  function later(fn,ms){timers.push(setTimeout(fn,ms));}
+  function clearT(){timers.forEach(clearTimeout);timers=[];}
+  function paint(m){
+    ecgMode=m;
+    for(var i=0;i<chips.length;i++)chips[i].classList.toggle('on',chips[i].getAttribute('data-m')===m);
+    if(bpm)bpm.style.display=(m==='sinus')?'':'none';
+  }
+  function setMode(m){
+    clearT();state='idle';paint(m);
+    act.classList.remove('ready');act.disabled=false;
+    if(m==='vt'||m==='vf'){act.style.display='';act.textContent='⚡ Charge 200 J';}
+    else if(m==='asys'){act.style.display='';act.textContent='💉 CPR + adrenaline';}
+    else act.style.display='none';
+    st.textContent=MSG[m];
+  }
+  for(var i=0;i<chips.length;i++){
+    (function(c){c.addEventListener('click',function(){setMode(c.getAttribute('data-m'));});})(chips[i]);
+  }
+  act.addEventListener('click',function(){
+    var m=ecgMode;
+    if(state==='idle'&&m==='asys'){
+      st.textContent='Adrenaline 1 mg IV, CPR for 2 min, then reassess. Think H\'s and T\'s. No shock for asystole.';
+    }else if(state==='idle'&&(m==='vt'||m==='vf')){
+      state='charging';act.disabled=true;act.textContent='Charging…';
+      st.textContent='Charging to 200 J. Continue compressions.';
+      later(function(){
+        state='ready';act.disabled=false;act.classList.add('ready');act.textContent='⚡ SHOCK';
+        st.textContent='Charged. Everybody clear, then shock.';
+      },1400);
+    }else if(state==='ready'){
+      state='post';act.classList.remove('ready');act.style.display='none';
+      bar.classList.remove('shock');void bar.offsetWidth;bar.classList.add('shock');
+      paint('asys');
+      st.textContent='Shock delivered. Post-shock pause…';
+      later(function(){
+        paint('sinus');state='idle';
+        st.textContent='ROSC. Organised rhythm restored. Check pulse, start post-arrest care.';
+      },1700);
+    }
+  });
+})();
+
 function getCssVar(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
@@ -1263,6 +1361,8 @@ function drawECG(canvas, offset, opacity, strokeW){
 
   // Collect all points
   var allPts = [];
+  var altMode = (canvas.id==='ecgCanvas') ? ecgMode : 'sinus';
+  if(altMode!=='sinus'){ totalCycles = 0; allPts = ecgAlt(altMode, W, baseline, amplitude, offset); }
   for(var c = 0; c < totalCycles; c++){
     var pts = ecgCycle(startX + c * cycleW, cycleW, amplitude, baseline);
     allPts = allPts.concat(pts);
