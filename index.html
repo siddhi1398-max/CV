@@ -660,8 +660,8 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
 
 <!-- ══ ECG BAR — canvas, theme-aware ══ -->
 <div class="ecg-bar" aria-hidden="true">
-  <canvas id="ecgCanvas"></canvas>
-</div>
+<canvas id="ecgCanvas"></canvas>
+<button id="bpmBtn" type="button" title="Click to change heart rate" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--ecg-line);background:var(--p);border:1px solid var(--border);border-radius:4px;padding:3px 9px;cursor:pointer;">♥ <b id="bpmVal">72</b> bpm</button></div>
 
 <!-- ─── HERO ────────────────────────────────────────────── -->
 <div class="hero">
@@ -1300,7 +1300,14 @@ function startECG(){
 }
 
 window.addEventListener('load', startECG);
-window.addEventListener('resize', function(){
+(function(){
+  var rates=[[0.7,60],[1.1,72],[1.8,110],[2.6,150]],i=1;
+  document.getElementById('bpmBtn').addEventListener('click',function(){
+    i=(i+1)%rates.length;
+    ecgSpeed=rates[i][0];
+    document.getElementById('bpmVal').textContent=rates[i][1];
+  });
+})();window.addEventListener('resize', function(){
   // force canvas resize on next frame
   var c1=document.getElementById('ecgCanvas');
   var c2=document.getElementById('heroEcgCanvas');
@@ -1599,6 +1606,33 @@ function drawRadar(){
 window.addEventListener('load',function(){
   setTimeout(function(){drawRadar();},200);
 });
+/* ── IF chip pop-in (was undefined → ReferenceError) ── */
+function animateIFBars(){
+  document.querySelectorAll('.if-chip').forEach(function(c,i){
+    c.animate([{transform:'scale(.85)',opacity:0},{transform:'scale(1)',opacity:1}],
+      {duration:300,delay:i*90,easing:'ease-out',fill:'backwards'});
+  });
+}
+
+/* ── count-up vitals ── */
+(function(){
+  var rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var v=document.querySelector('.vitals');
+  if(!v||!window.IntersectionObserver||rm)return;
+  new IntersectionObserver(function(es,o){
+    if(!es[0].isIntersecting)return; o.disconnect();
+    v.querySelectorAll('.vv').forEach(function(el){
+      var n=el.firstChild; if(!n||n.nodeType!==3)return;
+      var end=parseInt(n.nodeValue,10); if(isNaN(end))return;
+      var t0=performance.now();
+      (function step(t){
+        var p=Math.min((t-t0)/900,1);
+        n.nodeValue=Math.round(end*(1-Math.pow(1-p,3)));
+        if(p<1)requestAnimationFrame(step);
+      })(t0);
+    });
+  },{threshold:.5}).observe(v);
+})();
 </script>
 </body>
 </html>
