@@ -511,16 +511,6 @@ a.cc:hover .cc, a.cc:hover{background:var(--gold-bg);border-color:var(--gold);tr
 .carousel-btn.prev{left:8px;}
 .carousel-btn.next{right:8px;}
 
-/* ─── PHOTOS ─────────────────────────────────────────────── */
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
-.photo-slot{aspect-ratio:1;background:var(--p2);border:1px dashed var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:.8rem;text-align:center;position:relative;}
-.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:var(--r);}
-.photo-slot i{font-size:22px;color:var(--border);}
-.photo-slot span{font-size:10px;color:var(--faint);font-family:var(--mono);}
-.photo-caption{font-size:11px;font-weight:500;color:var(--muted);text-align:center;margin-top:4px;font-family:var(--mono);}
-.photo-notice{background:var(--gold-bg);border:1px solid var(--gold);border-radius:var(--r);padding:.6rem 1rem;font-size:11px;color:var(--gold);font-family:var(--mono);margin-bottom:.75rem;display:flex;align-items:flex-start;gap:8px;}
-.photo-notice i{flex-shrink:0;font-size:14px;margin-top:1px;}
-
 /* ─── FOOTER ─────────────────────────────────────────────── */
 footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(--teal-bg) 100%);border-top:2px solid var(--wine);padding:1.5rem 2rem;}
 .footer-in{max-width:820px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:.85rem;}
@@ -691,7 +681,7 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
 
 /* ─── PRINT ──────────────────────────────────────────────── */
 @media print{
-  .ecg-bar,.nav,.dm-btn,.hero-actions,.doc-link,.photo-notice,.social-row,.about-toggle,.opento-strip,.carousel-btn,.carousel-dots,.hero-ecg-bg{display:none!important;}
+  .ecg-bar,.nav,.dm-btn,.hero-actions,.doc-link,.social-row,.about-toggle,.opento-strip,.carousel-btn,.carousel-dots,.hero-ecg-bg{display:none!important;}
   .about-body.closed,.sb.closed{max-height:none!important;opacity:1!important;pointer-events:auto!important;}
   body{font-size:12px;background:#fff!important;color:#000!important;}
   .sec{page-break-inside:avoid;border-color:#ccc;}
@@ -833,7 +823,6 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
     <button class="nb" onclick="goTo('awards',this)"><i class="ti ti-trophy"></i>Awards</button>
     <button class="nb" onclick="goTo('languages',this)"><i class="ti ti-message-circle"></i>Languages</button>
     <button class="nb" onclick="goTo('interests',this)"><i class="ti ti-heart"></i>Interests</button>
-    <button class="nb" onclick="goTo('photos',this)"><i class="ti ti-camera"></i>Photos</button>
   </div>
 </nav>
 
@@ -1206,25 +1195,6 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
   </div>
 </section>
 
-<!-- ═══ 11 PHOTOS ═══ -->
-<section class="sec sec-hidden" id="photos" style="border-bottom:none;">
-  <div class="sh" onclick="tog('phB','phI')" role="button" tabindex="0" aria-expanded="false" aria-controls="phB" onkeydown="if(event.key==='Enter'||event.key===' ')tog('phB','phI')">
-    <span class="se">11</span><span class="st">Photos</span><i class="ti ti-chevron-down si" id="phI" aria-hidden="true"></i>
-  </div>
-  <div class="sb closed" id="phB">
-    <div class="photo-notice">
-      <i class="ti ti-info-circle"></i>
-      <span>Replace each placeholder below with <code>&lt;img src="…" alt="caption"/&gt;</code> inside the <code>.photo-slot</code> div. Minimum 400×400 px. Google Drive: <code>uc?export=view&amp;id=FILE_ID</code>.</span>
-    </div>
-    <div class="photo-grid">
-      <div class="photo-col"><div class="photo-slot"><i class="ti ti-camera"></i><span>Conference</span></div><div class="photo-caption">Conferences</div></div>
-      <div class="photo-col"><div class="photo-slot"><i class="ti ti-stethoscope"></i><span>Clinical</span></div><div class="photo-caption">Clinical</div></div>
-      <div class="photo-col"><div class="photo-slot"><i class="ti ti-presentation"></i><span>Research</span></div><div class="photo-caption">Research</div></div>
-      <div class="photo-col"><div class="photo-slot"><i class="ti ti-device-mobile"></i><span>PedResus</span></div><div class="photo-caption">PedResus</div></div>
-    </div>
-  </div>
-</section>
-
 </div><!-- /.wrap -->
 
 <footer>
@@ -1581,7 +1551,7 @@ try{
 }catch(e){}
 
 /* ── nav scroll highlight ── */
-var secs=['experience','research','projects','certifications','competencies','conferences','education','awards','languages','interests','photos'];
+var secs=['experience','research','projects','certifications','competencies','conferences','education','awards','languages','interests'];
 var nbs=document.querySelectorAll('.nb');
 if(nbs.length) nbs[0].classList.add('on');
 window.addEventListener('scroll',function(){
