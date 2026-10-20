@@ -116,44 +116,62 @@ body{font-family:var(--sans);background:var(--p);color:var(--ink);font-size:14px
 .hi{max-width:820px;margin:0 auto;position:relative;z-index:1;}
 .hero-top{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:.75rem;}
 
-/* POCUS sweep on avatar hover */
+/* Avatar: tap-to-flip photo / USG probe, POCUS sweep on hover */
 .avatar{
-  width:92px;height:92px;border-radius:50%;
-  background:var(--p3);
-  border:3px solid var(--wine);
+  position:relative;width:92px;height:92px;flex-shrink:0;
+  padding:0;border:0;background:none;font:inherit;cursor:pointer;
+  perspective:600px;-webkit-tap-highlight-color:transparent;
+}
+.av-in{
+  position:relative;display:block;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transition:transform .6s cubic-bezier(.4,.2,.2,1);
+}
+.avatar[aria-pressed="true"] .av-in{transform:rotateY(180deg);}
+.av-face{
+  position:absolute;inset:0;border-radius:50%;
+  background:var(--p3);border:3px solid var(--wine);
   box-shadow:0 0 0 5px var(--wine-bg);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
   font-size:1.6rem;font-weight:700;color:var(--wine);
-  flex-shrink:0;overflow:hidden;
-  position:relative;cursor:default;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+  transition:box-shadow .3s;
 }
-.avatar img{width:100%;height:100%;object-fit:cover;}
-.avatar::after{
-  content:'';
-  position:absolute;inset:0;
-  border-radius:50%;
-  background:conic-gradient(
-    rgba(0,151,167,0) 0deg,
-    rgba(0,151,167,0.45) 60deg,
-    rgba(0,151,167,0) 120deg
-  );
-  opacity:0;
-  animation:none;
-  transition:opacity .3s;
+.av-face.back{transform:rotateY(180deg);}
+.av-face img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:50% 25%;
 }
-.avatar:hover::after{
-  opacity:1;
-  animation:pocus-sweep 1.6s linear infinite;
+.av-face svg{width:66%;height:66%;}
+.av-face.back::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(rgba(0,151,167,0) 0deg,rgba(0,151,167,.45) 60deg,rgba(0,151,167,0) 120deg);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.avatar:hover .av-face.back::after{opacity:1;animation:pocus-sweep 1.6s linear infinite;}
+.avatar:hover .av-face{
+  box-shadow:0 0 0 5px var(--wine-bg),0 0 0 8px rgba(0,151,167,.2),0 0 0 12px rgba(0,151,167,.08);
 }
 @keyframes pocus-sweep{
   0%{transform:rotate(0deg)}
   100%{transform:rotate(360deg)}
 }
-.avatar:hover{
-  box-shadow:0 0 0 5px var(--wine-bg),
-             0 0 0 8px rgba(0,151,167,.2),
-             0 0 0 12px rgba(0,151,167,.08);
+/* probe echo waves, only while the probe side is showing */
+.av-face .w{stroke:var(--teal);opacity:.3;}
+.avatar[aria-pressed="false"] .w{animation:av-echo 1.4s ease-in-out infinite;}
+.avatar[aria-pressed="false"] .w2{animation-delay:.2s;}
+.avatar[aria-pressed="false"] .w3{animation-delay:.4s;}
+@keyframes av-echo{0%,100%{opacity:.25}40%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.avatar[aria-pressed="false"] .w{animation:none;opacity:1;}}
+/* discoverability chip, hides after first flip */
+.av-hint{
+  position:absolute;right:-6px;bottom:2px;z-index:2;
+  font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.5px;
+  background:var(--teal);color:#fff;padding:3px 7px;border-radius:999px;
+  transition:opacity .3s;pointer-events:none;
 }
+.avatar.seen .av-hint{opacity:0;}
+.avatar:focus-visible{outline:2px solid var(--teal);outline-offset:6px;border-radius:50%;}
 
 .hero-center{flex:1;min-width:0;}
 .htag{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--teal);text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:6px;}
@@ -713,7 +731,21 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
 
   <div class="hi">
     <div class="hero-top">
-      <div class="avatar" id="av" title="Hover for POCUS scan effect"><span>SN</span></div>
+      <button class="avatar" id="av" type="button" aria-pressed="false" title="Tap to flip" aria-label="Ultrasound probe icon. Tap to flip to profile photo">
+        <span class="av-in">
+          <span class="av-face back">SN<img src="assets/sid.jpg" alt="Dr. Siddhi Naik" width="92" height="92" onerror="this.remove()"></span>
+          <span class="av-face front" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="25" y="3" width="14" height="19" rx="5"/>
+              <path d="M27 22 L25 33 Q32 37 39 33 L37 22"/>
+              <path class="w w1" d="M21 42 Q32 47 43 42"/>
+              <path class="w w2" d="M15 49 Q32 56 49 49"/>
+              <path class="w w3" d="M9 56 Q32 65 55 56"/>
+            </svg>
+          </span>
+        </span>
+        <span class="av-hint" aria-hidden="true">flip</span>
+      </button>
       <div class="hero-center">
         <div class="htag">Emergency Medicine · Mangalore, India</div>
         <div class="hname">Dr. <span>Siddhi Naik</span></div>
@@ -1928,6 +1960,16 @@ function drawRadar(){
   window.openPalette=open;
   document.addEventListener('keydown',function(e){
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open();}
+  });
+})();
+</script>
+<script>
+(function(){
+  var av=document.getElementById('av');
+  if(!av)return;
+  av.addEventListener('click',function(){
+    av.setAttribute('aria-pressed',String(av.getAttribute('aria-pressed')!=='true'));
+    av.classList.add('seen');
   });
 })();
 </script>
