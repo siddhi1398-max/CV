@@ -384,6 +384,23 @@ a.cc:hover .cc, a.cc:hover{background:var(--gold-bg);border-color:var(--gold);tr
 
 /* ─── CONFERENCES ────────────────────────────────────────── */
 .cp{display:flex;flex-wrap:wrap;gap:5px;}
+
+/* radar → skill chip highlight */
+.sk.hl-on .stg{opacity:.3;}
+.sk.hl-on .stg.hl{opacity:1;background:var(--wine);color:#fff;border-color:var(--wine);}
+.rl-item:hover{color:var(--wine);}
+
+/* command palette */
+#pal{display:none;position:fixed;inset:0;z-index:999;background:rgba(26,17,8,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);align-items:flex-start;justify-content:center;padding:12vh 1rem 0;}
+.pal-box{width:min(560px,100%);background:var(--p);border:1px solid var(--border);border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;}
+.pal-in{width:100%;border:0;border-bottom:1px solid var(--border);background:transparent;color:var(--ink);font:15px var(--sans);padding:.9rem 1rem;outline:none;}
+.pal-list{max-height:50vh;overflow-y:auto;}
+.pal-row{display:flex;gap:10px;align-items:baseline;padding:.55rem 1rem;cursor:pointer;font-size:13px;color:var(--ink);}
+.pal-row.on{background:var(--teal-bg);}
+.pal-t{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);min-width:62px;flex-shrink:0;}
+.dm-btn kbd{font-family:var(--mono);font-size:8px;border:1px solid var(--border);border-radius:3px;padding:0 4px;margin-left:4px;}
+.flash{animation:flashHL 1.4s ease 1;}
+@keyframes flashHL{0%,100%{box-shadow:0 0 0 0 transparent;}30%{box-shadow:0 0 0 3px var(--teal);}}
 .cpp{font-size:11px;padding:3px 9px;border:1px solid var(--border);border-radius:var(--r);background:var(--p2);color:var(--ink);}
 .cpp.og{border-color:var(--gold);color:var(--gold);}
 .cpp.fc{border-color:var(--teal);color:var(--teal);}
@@ -685,6 +702,7 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
         </div>
         <div class="hero-actions">
           <button class="print-btn" onclick="window.print()"><i class="ti ti-printer"></i>Print / Save PDF</button>
+          <button class="dm-btn" type="button" onclick="openPalette()"><i class="ti ti-search"></i>Search<kbd>Ctrl K</kbd></button>
           <button class="dm-btn" onclick="toggleDark()" id="dmBtn">
             <i class="ti ti-moon" id="dmIcon"></i><span id="dmLabel">Dark</span>
           </button>
@@ -899,13 +917,13 @@ footer{background:linear-gradient(135deg, var(--wine-bg) 0%, var(--p3) 50%, var(
             <div class="phone-frame">
               <div class="phone-notch"></div>
               <div class="phone-screen">
-                <div class="demo-loading" id="demoLoading">
-                  <div class="demo-spinner"></div>
-                  <span>Loading PedResus…</span>
+               <div class="demo-loading" id="demoLoading" role="button" tabindex="0" style="cursor:pointer;" onclick="launchDemo()" onkeydown="if(event.key==='Enter'||event.key===' ')launchDemo()">
+                  <i class="ti ti-player-play" id="demoPlay" style="font-size:34px;color:var(--teal);"></i>
+                 <span id="demoLbl">TAP TO LAUNCH PEDRESUS</span>
                 </div>
                 <iframe
                   id="pedResusDemoFrame"
-                  src="https://ped-resus.vercel.app/"
+                  data-src="https://ped-resus.vercel.app/"
                   title="PedResus Live Demo"
                   loading="lazy"
                   allow="fullscreen"
@@ -1318,8 +1336,7 @@ window.addEventListener('load', startECG);
 /* ── Demo iframe load / block detection ── */
 function onDemoLoad(){
   var loading = document.getElementById('demoLoading');
-  if(loading) loading.style.display = 'none';
-  // Try to detect if the iframe content is actually a blocked page
+if(loading && document.getElementById('pedResusDemoFrame').getAttribute('src')) loading.style.display = 'none';  // Try to detect if the iframe content is actually a blocked page
   // (Chrome shows a net::ERR_... page; we can only detect via timeout)
 }
 // If the iframe hasn't fired onload within 12s, show the fallback notice
@@ -1328,8 +1345,8 @@ window.addEventListener('load', function(){
     var frame = document.getElementById('pedResusDemoFrame');
     var loading = document.getElementById('demoLoading');
     // If loading overlay is still visible, assume blocked
-    if(loading && loading.style.display !== 'none'){
-      loading.style.display = 'none';
+if(false){
+  loading.style.display = 'none';
       var blocked = document.getElementById('demoBlocked');
       if(blocked) blocked.style.display = 'flex';
     }
@@ -1632,6 +1649,186 @@ function animateIFBars(){
       })(t0);
     });
   },{threshold:.5}).observe(v);
+})();
+/* ── PedResus: click-to-launch ── */
+function launchDemo(){
+  var f=document.getElementById('pedResusDemoFrame'),l=document.getElementById('demoLoading');
+  if(!f||!l||f.getAttribute('src'))return;
+  var p=document.getElementById('demoPlay');
+  if(p){var sp=document.createElement('div');sp.className='demo-spinner';p.replaceWith(sp);}
+  var lb=document.getElementById('demoLbl');if(lb)lb.textContent='Loading PedResus…';
+  l.style.cursor='default';
+  f.setAttribute('src',f.getAttribute('data-src'));
+  setTimeout(function(){
+    if(l.style.display!=='none'){
+      l.style.display='none';
+      var b=document.getElementById('demoBlocked');if(b)b.style.display='flex';
+    }
+  },12000);
+}
+
+/* ── Live citation counts (Crossref). Shows only if count > 0 ── */
+(function(){
+  document.querySelectorAll('a.doi-link').forEach(function(a){
+    var doi=a.href.replace(/^https?:\/\/doi\.org\//,''),key='cr:'+doi;
+    function put(n){
+      if(!(n>0))return;
+      var s=document.createElement('span');s.className='pmet';
+      s.innerHTML='<i class="ti ti-quote"></i>';
+      s.appendChild(document.createTextNode(n+' citation'+(n===1?'':'s')+' · Crossref'));
+      a.parentNode.insertBefore(s,a);
+    }
+    try{var c=sessionStorage.getItem(key);if(c!==null){put(+c);return;}}catch(e){}
+    fetch('https://api.crossref.org/works/'+encodeURI(doi)+'?mailto=siddhi1398@gmail.com')
+      .then(function(r){return r.ok?r.json():Promise.reject();})
+      .then(function(j){
+        var n=j.message&&j.message['is-referenced-by-count'];
+        if(typeof n!=='number')return;
+        try{sessionStorage.setItem(key,n);}catch(e){}
+        put(n);
+      }).catch(function(){});
+  });
+})();
+
+/* ── Radar v2: animated draw-in, hover tooltips, click axis → highlight skills ── */
+var radarActive=-1;
+var radarMap=[/pediatric/i,/ultrasound|pocus/i,/critical|airway|procedural/i,/trauma|fracture/i,/research|evidence|quality/i,/quality|administration|disaster|public/i];
+function renderRadar(k){
+  var svg=document.getElementById('radarSvg');if(!svg)return;
+  var n=radarData.length,ns='http://www.w3.org/2000/svg',cx=150,cy=148,r=100;
+  var st=getComputedStyle(document.documentElement);
+  var cB=st.getPropertyValue('--border').trim(),cM=st.getPropertyValue('--muted').trim(),
+      cT=st.getPropertyValue('--teal').trim(),cW=st.getPropertyValue('--wine').trim();
+  svg.innerHTML='';
+  function el(tag,a,p){var e=document.createElementNS(ns,tag);for(var x in a)e.setAttribute(x,a[x]);(p||svg).appendChild(e);return e;}
+  function pt(i,rad){var a=Math.PI*2/n*i-Math.PI/2;return [cx+rad*Math.cos(a),cy+rad*Math.sin(a)];}
+  [.33,.66,1].forEach(function(f){
+    var s=[];for(var i=0;i<n;i++)s.push(pt(i,r*f).join(','));
+    el('polygon',{points:s.join(' '),fill:'none',stroke:cB,'stroke-width':.8,'stroke-dasharray':'3 3'});
+  });
+  for(var i=0;i<n;i++){var p=pt(i,r);el('line',{x1:cx,y1:cy,x2:p[0],y2:p[1],stroke:cB,'stroke-width':.8});}
+  var w=[];for(var i=0;i<n;i++)w.push(pt(i,r*radarData[i].val*k).join(','));
+  el('polygon',{points:w.join(' '),'class':'radar-web'});
+  radarData.forEach(function(d,i){
+    var on=radarActive===i,v=pt(i,r*d.val*k),l=pt(i,r+18);
+    el('circle',{cx:v[0],cy:v[1],r:on?5:3,fill:on?cW:cT});
+    var t=el('text',{x:l[0],y:l[1],'text-anchor':'middle','dominant-baseline':'middle','class':'radar-lbl',fill:on?cW:cM,style:'cursor:pointer;'+(on?'font-weight:600;':'')});
+    t.textContent=d.label;
+    var h=el('circle',{cx:v[0],cy:v[1],r:14,fill:'transparent',style:'cursor:pointer;'});
+    var tt=el('title',{},h);tt.textContent=d.label+' — '+Math.round(d.val*100)+'%  (click to highlight skills)';
+    h.addEventListener('click',function(){radarPick(i);});
+    t.addEventListener('click',function(){radarPick(i);});
+  });
+}
+function radarPick(i){
+  radarActive=(radarActive===i)?-1:i;
+  document.querySelectorAll('#koB .sk').forEach(function(g){
+    g.classList.toggle('hl-on',radarActive>=0);
+    g.querySelectorAll('.stg').forEach(function(c){
+      c.classList.toggle('hl',radarActive>=0&&radarMap[radarActive].test(c.textContent));
+    });
+  });
+  renderRadar(1);
+}
+function drawRadar(){
+  var svg=document.getElementById('radarSvg');if(!svg)return;
+  var leg=document.getElementById('radarLegend');
+  if(leg){
+    leg.innerHTML='';
+    radarData.forEach(function(d,i){
+      var it=document.createElement('div');it.className='rl-item';it.style.cursor='pointer';
+      it.innerHTML='<div class="rl-dot"></div>';
+      var s=document.createElement('span');s.textContent=d.label+' — '+Math.round(d.val*100)+'%';
+      it.appendChild(s);it.onclick=function(){radarPick(i);};leg.appendChild(it);
+    });
+  }
+  var rm=matchMedia('(prefers-reduced-motion:reduce)').matches,D=rm?1:900,t0=performance.now();
+  cancelAnimationFrame(window._rr);
+  (function f(t){
+    var p=Math.min((t-t0)/D,1);
+    renderRadar(1-Math.pow(1-p,3));
+    if(p<1)window._rr=requestAnimationFrame(f);
+  })(t0);
+  radarDrawn=true;
+}
+
+/* ── Ctrl/Cmd+K command palette ── */
+(function(){
+  var ov,inp,list,items=null,res=[],sel=0;
+  var SRC=[['.pc .ptit','Paper'],['.cc .cn','Cert'],['.cpp','Event'],['.awt','Award'],['.ec .er','Role'],['.edg','Degree'],['.stg','Skill']];
+  function index(){
+    items=[];
+    document.querySelectorAll('section.sec').forEach(function(s){
+      var t=s.querySelector('.st');if(t)items.push({label:t.textContent,type:'Section',sec:s.id,el:s});
+    });
+    SRC.forEach(function(x){
+      document.querySelectorAll(x[0]).forEach(function(e){
+        var s=e.closest('section');if(!s)return;
+        items.push({label:e.textContent.replace(/\s+/g,' ').trim(),type:x[1],sec:s.id,el:e});
+      });
+    });
+  }
+  function fz(q,s){
+    q=q.toLowerCase();s=s.toLowerCase();
+    var i=s.indexOf(q);if(i>=0)return 100-i;
+    var j=0;for(var k=0;k<s.length&&j<q.length;k++)if(s[k]===q[j])j++;
+    return j===q.length?10:-1;
+  }
+  function paint(){
+    list.innerHTML='';
+    res.forEach(function(r,i){
+      var row=document.createElement('div');row.className='pal-row'+(i===sel?' on':'');
+      var t=document.createElement('span');t.className='pal-t';t.textContent=r.type;
+      var l=document.createElement('span');l.textContent=r.label;
+      row.appendChild(t);row.appendChild(l);
+      row.addEventListener('mousedown',function(e){e.preventDefault();go(r);});
+      list.appendChild(row);
+    });
+    var on=list.querySelector('.on');if(on)on.scrollIntoView({block:'nearest'});
+  }
+  function render(){
+    var q=inp.value.trim();sel=0;
+    if(!q){res=items.filter(function(x){return x.type==='Section';});}
+    else{
+      res=items.map(function(x){return {x:x,s:fz(q,x.label)};})
+        .filter(function(o){return o.s>=0;})
+        .sort(function(a,b){return b.s-a.s;})
+        .slice(0,8).map(function(o){return o.x;});
+    }
+    paint();
+  }
+  function go(r){
+    if(!r)return;
+    close();
+    goTo(r.sec);
+    if(r.type==='Section')return;
+    setTimeout(function(){
+      r.el.scrollIntoView({behavior:'smooth',block:'center'});
+      r.el.classList.remove('flash');void r.el.offsetWidth;r.el.classList.add('flash');
+    },520);
+  }
+  function build(){
+    if(ov)return;
+    index();
+    ov=document.createElement('div');ov.id='pal';
+    ov.innerHTML='<div class="pal-box"><input class="pal-in" placeholder="Search sections, papers, certs, skills…" aria-label="Search CV"/><div class="pal-list" role="listbox"></div></div>';
+    document.body.appendChild(ov);
+    inp=ov.querySelector('input');list=ov.querySelector('.pal-list');
+    ov.addEventListener('mousedown',function(e){if(e.target===ov)close();});
+    inp.addEventListener('input',render);
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='ArrowDown'){sel=Math.min(sel+1,res.length-1);paint();e.preventDefault();}
+      else if(e.key==='ArrowUp'){sel=Math.max(sel-1,0);paint();e.preventDefault();}
+      else if(e.key==='Enter'){go(res[sel]);}
+      else if(e.key==='Escape'){close();}
+    });
+  }
+  function open(){build();ov.style.display='flex';inp.value='';render();inp.focus();}
+  function close(){if(ov)ov.style.display='none';}
+  window.openPalette=open;
+  document.addEventListener('keydown',function(e){
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();open();}
+  });
 })();
 </script>
 </body>
